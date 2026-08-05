@@ -196,6 +196,24 @@
   }
   .empty-hint .glyph{ font-size:34px; }
 
+  .credit-footer{
+    text-align:center;
+    padding:8px 12px 10px;
+    font-size:11px;
+    color:var(--ink-soft);
+    background:var(--paper);
+    border-top:1px dashed var(--rule);
+    letter-spacing:0.3px;
+  }
+  .credit-footer .name{
+    font-family:'Lalezar', sans-serif;
+    font-size:14px;
+    color:var(--gold);
+    letter-spacing:0.5px;
+    margin-right:4px;
+  }
+  .credit-footer .quill{ opacity:0.6; margin-left:4px; }
+
   ::-webkit-scrollbar{ width:8px; }
   ::-webkit-scrollbar-thumb{ background:var(--rule); border-radius:4px; }
 </style>
@@ -211,6 +229,7 @@
       </div>
     </header>
     <div class="ruled" id="screenArea"></div>
+    <div class="credit-footer">✎ سازنده: <span class="name">یونس بابادی</span></div>
   </div>
 
 <script>
