@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دستیار درسی کنکور</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Lalezar&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --ink:#1B2A4A;
+    --ink-soft:#3A4A6B;
+    --paper:#EDEAE0;
+    --paper-light:#F6F4EE;
+    --rule:#B7C2D6;
+    --accent:#A63636;
+    --gold:#C9A227;
+    --teal:#3B6E71;
+    --shadow: 0 10px 30px rgba(27,42,74,0.18);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family:'Vazirmatn', sans-serif;
+    background: var(--ink);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(201,162,39,0.08), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(59,110,113,0.10), transparent 40%);
+    background-size: 200% 200%;
+    animation: bgDrift 18s ease-in-out infinite;
+    min-height:100vh;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  @keyframes bgDrift{
+    0%{ background-position: 0% 0%; }
+    50%{ background-position: 100% 100%; }
+    100%{ background-position: 0% 0%; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    body{ animation:none; }
+    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  }
+
+  .app{
+    width:100%;
+    max-width:760px;
+    min-height:660px;
+    background:var(--paper-light);
+    border-radius:8px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    animation: appIn 0.5s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes appIn{
+    from{ opacity:0; transform:translateY(14px) scale(0.985); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  .ruled{
+    background-image: repeating-linear-gradient(
+      to bottom, transparent 0px, transparent 35px, var(--rule) 36px
+    );
+    position:relative;
+  }
+  .ruled::before{
+    content:''; position:absolute; top:0; bottom:0; right:56px; width:2px;
+    background: var(--accent); opacity:0.5;
+  }
+  .app > .ruled{ flex:1; padding:28px 84px 28px 28px; overflow-y:auto; }
+
+  header.topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px; background:var(--ink); color:var(--paper-light);
+    position:relative; z-index:2;
+  }
+  header.topbar .brand{
+    font-family:'Lalezar', sans-serif; font-size:22px; letter-spacing:0.5px; color:var(--gold);
+    display:flex; align-items:center; gap:8px;
+  }
+  .pencil-dot{
+    width:8px; height:8px; border-radius:50%; background:var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.4; transform:scale(1.4);} }
+  header.topbar .path{ font-size:13px; color:var(--paper); opacity:0.85; transition:opacity 0.2s; }
+  header.topbar .btns{ display:flex; gap:8px; align-items:center; }
+  header.topbar button{
+    background:none; border:1px solid rgba(246,244,238,0.35); color:var(--paper-light);
+    padding:6px 14px; border-radius:5px; cursor:pointer; font-family:'Vazirmatn'; font-size:13px;
+    transition: background 0.15s, transform 0.15s;
+  }
+  header.topbar button:hover{ background: rgba(246,244,238,0.14); transform:translateY(-1px); }
+  header.topbar button:disabled{ opacity:0.3; cursor:default; transform:none; }
+  .quota-pill{
+    font-size:11.5px; background:rgba(201,162,39,0.18); color:var(--gold);
+    border:1px solid rgba(201,162,39,0.4); padding:3px 10px; border-radius:20px;
+  }
+
+  .screen{ animation: screenIn 0.35s cubic-bezier(.2,.8,.2,1); }
+  @keyframes screenIn{
+    from{ opacity:0; transform:translateX(8px); }
+    to{ opacity:1; transform:translateX(0); }
+  }
+  .screen-title{ font-family:'Lalezar', sans-serif; font-size:28px; color:var(--ink); margin-bottom:6px; }
+  .screen-sub{ font-size:14px; color:var(--ink-soft); margin-bottom:24px; }
+
+  .tab-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  .tab-card{
+    background:var(--paper-light); border:1.5px solid var(--rule); border-radius:6px;
+    padding:20px 12px; text-align:center; cursor:pointer; position:relative;
+    transition: transform 0.15s cubic-bezier(.2,.8,.2,1), border-color 0.15s, box-shadow 0.15s;
+    animation: cardIn 0.4s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .tab-grid .tab-card:nth-child(1){ animation-delay:0.02s; }
+  .tab-grid .tab-card:nth-child(2){ animation-delay:0.08s; }
+  .tab-grid .tab-card:nth-child(3){ animation-delay:0.14s; }
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
+  .tab-card:hover{ transform:translateY(-4px); border-color:var(--gold); box-shadow:0 8px 20px rgba(201,162,39,0.28); }
+  .tab-card:active{ transform:translateY(-1px) scale(0.98); }
+  .tab-card .num{ font-family:'Lalezar'; font-size:32px; color:var(--teal); display:block; margin-bottom:6px; }
+  .tab-card .label{ font-size:14px; font-weight:600; color:var(--ink); }
+  .tab-card .desc{ font-size:11.5px; color:var(--ink-soft); margin-top:4px; }
+
+  .chat-wrap{ display:flex; flex-direction:column; height:100%; }
+  .messages{ flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:16px; padding-bottom:12px; }
+  .msg{ max-width:88%; animation: msgIn 0.3s cubic-bezier(.2,.8,.2,1); }
+  @keyframes msgIn{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
+  .msg.user{
+    align-self:flex-start; background:var(--ink); color:var(--paper-light);
+    padding:10px 14px; border-radius:10px 10px 10px 2px; font-size:14px; line-height:1.9;
+  }
+  .msg.user img{ max-width:220px; border-radius:6px; display:block; margin-top:8px; }
+  .msg.ai{ align-self:flex-end; padding:4px 4px 4px 0; font-size:14.5px; line-height:2.1; color:var(--ink); }
+  .msg.ai .tick{ color:var(--accent); font-weight:700; margin-left:4px; }
+  .msg.ai .content{ white-space:pre-wrap; }
+  .msg.ai .content strong{ color:var(--teal); font-weight:700; }
+  .msg.ai .content .katex{ font-size:1.05em; }
+  .msg.ai .content hr{ border:none; border-top:1px dashed var(--rule); margin:10px 0; }
+
+  .typing{ align-self:flex-end; display:flex; gap:4px; padding:6px 4px; }
+  .typing span{
+    width:6px; height:6px; border-radius:50%; background:var(--teal); opacity:0.6;
+    animation: bounce 1.2s infinite ease-in-out;
+  }
+  .typing span:nth-child(2){ animation-delay:0.15s; }
+  .typing span:nth-child(3){ animation-delay:0.3s; }
+  @keyframes bounce{ 0%,60%,100%{ transform:translateY(0); opacity:0.5;} 30%{ transform:translateY(-5px); opacity:1;} }
+
+  .attach-preview{
+    display:flex; align-items:center; gap:10px; background:var(--paper);
+    border:1px dashed var(--rule); border-radius:6px; padding:8px 10px; margin-bottom:8px;
+    font-size:12.5px; color:var(--ink-soft); animation: cardIn 0.25s ease both;
+  }
+  .attach-preview img{ width:44px; height:44px; object-fit:cover; border-radius:4px; }
+  .attach-preview button{ margin-right:auto; background:none; border:none; color:var(--accent); cursor:pointer; font-size:12.5px; font-family:'Vazirmatn'; }
+
+  .composer{ display:flex; gap:8px; padding-top:12px; border-top:1px dashed var(--rule); align-items:flex-end; }
+  .composer textarea{
+    flex:1; resize:none; font-family:'Vazirmatn'; font-size:14px; border:1.5px solid var(--rule);
+    border-radius:8px; padding:10px 12px; background:var(--paper-light); color:var(--ink);
+    min-height:44px; max-height:120px; transition:border-color 0.15s, box-shadow 0.15s;
+  }
+  .composer textarea:focus{ outline:none; border-color:var(--teal); box-shadow:0 0 0 3px rgba(59,110,113,0.12); }
+  .icon-btn{
+    background:var(--paper-light); border:1.5px solid var(--rule); color:var(--ink); border-radius:8px;
+    width:44px; height:44px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:border-color 0.15s, transform 0.15s;
+  }
+  .icon-btn:hover{ border-color:var(--gold); transform:translateY(-1px); }
+  .composer button.send{
+    background:var(--accent); color:#fff; border:none; border-radius:8px; padding:0 20px; height:44px;
+    font-family:'Vazirmatn'; font-weight:600; font-size:14px; cursor:pointer;
+    transition:background 0.15s, transform 0.15s; position:relative; overflow:hidden;
+  }
+  .composer button.send:hover:not(:disabled){ background:#8f2c2c; transform:translateY(-1px); }
+  .composer button.send:active:not(:disabled){ transform:translateY(0); }
+  .composer button.send:disabled{ background:#bbb; cursor:default; }
+
+  .error-box{
+    background:#F9E4E4; border:1px solid var(--accent); color:var(--accent); font-size:13px;
+    padding:8px 12px; border-radius:6px; margin-bottom:10px; animation: cardIn 0.25s ease both;
+  }
+  .empty-hint{
+    text-align:center; color:var(--ink-soft); font-size:13px; padding:40px 12px;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .empty-hint .glyph{ font-size:34px; }
+
+  ::-webkit-scrollbar{ width:8px; }
+  ::-webkit-scrollbar-thumb{ background:var(--rule); border-radius:4px; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="pencil-dot"></span>دستیار درسی کنکور</div>
+      <div class="path" id="pathLabel">انتخاب پایه</div>
+      <div class="btns">
+        <span class="quota-pill" id="quotaPill" style="display:none;"></span>
+        <button id="backBtn" onclick="goBack()" disabled>بازگشت</button>
+      </div>
+    </header>
+    <div class="ruled" id="screenArea"></div>
+  </div>
+
+<script>
+const GRADES = [
+  {id:'دهم', label:'دهم', num:'۱۰'},
+  {id:'یازدهم', label:'یازدهم', num:'۱۱'},
+  {id:'دوازدهم', label:'دوازدهم', num:'۱۲'},
+];
+const MAJORS = [
+  {id:'ریاضی فیزیک', label:'ریاضی فیزیک', desc:'حسابان، هندسه، فیزیک'},
+  {id:'علوم تجربی', label:'علوم تجربی', desc:'زیست، شیمی، فیزیک'},
+  {id:'علوم انسانی', label:'علوم انسانی', desc:'ادبیات، اقتصاد، جامعه‌شناسی'},
+];
+
+let state = { grade:null, major:null, messages:[] };
+let attachedImage = null;
+let screenStack = ['grade'];
+
+function goBack(){ if(screenStack.length<=1) return; screenStack.pop(); render(); }
+function goTo(screen){ screenStack.push(screen); render(); }
+
+function gradeLabel(){ return state.grade || ''; }
+function majorLabel(){ return state.major || ''; }
+
+async function refreshQuota(){
+  try{
+    const r = await fetch('/api/quota');
+    const d = await r.json();
+    const pill = document.getElementById('quotaPill');
+    pill.style.display = 'inline-block';
+    pill.textContent = `${d.remaining} سوال رایگان باقی‌مانده`;
+  }catch(e){ /* بی‌سروصدا رد شو، اگه بک‌اند بالا نیست */ }
+}
+
+function render(){
+  const screen = screenStack[screenStack.length-1];
+  document.getElementById('backBtn').disabled = screenStack.length<=1;
+  const area = document.getElementById('screenArea');
+  const pathLabel = document.getElementById('pathLabel');
+  area.classList.remove('screen'); void area.offsetWidth; area.classList.add('screen');
+
+  if(screen === 'grade'){
+    pathLabel.textContent = 'انتخاب پایه';
+    area.innerHTML = `
+      <div class="screen-title">پایه‌ت رو انتخاب کن</div>
+      <div class="screen-sub">هر پایه، کتاب‌ها و روش حل مخصوص خودش رو داره</div>
+      <div class="tab-grid">
+        ${GRADES.map(g => `
+          <div class="tab-card" onclick="selectGrade('${g.id}')">
+            <span class="num">${g.num}</span>
+            <span class="label">پایه ${g.label}</span>
+          </div>`).join('')}
+      </div>`;
+  } else if(screen === 'major'){
+    pathLabel.textContent = `پایه ${gradeLabel()} › انتخاب رشته`;
+    area.innerHTML = `
+      <div class="screen-title">رشته‌ت چیه؟</div>
+      <div class="screen-sub">پایه ${gradeLabel()} — بر اساس رشته، دروس و روش حل فرق می‌کنه</div>
+      <div class="tab-grid">
+        ${MAJORS.map(m => `
+          <div class="tab-card" onclick="selectMajor('${m.id}')">
+            <span class="label">${m.label}</span>
+            <div class="desc">${m.desc}</div>
+          </div>`).join('')}
+      </div>`;
+  } else if(screen === 'chat'){
+    pathLabel.textContent = `پایه ${gradeLabel()} › ${majorLabel()}`;
+    area.innerHTML = `
+      <div class="screen-title" style="font-size:20px; margin-bottom:2px;">سوالت رو بپرس</div>
+      <div class="screen-sub" style="margin-bottom:14px;">می‌تونی متن بنویسی یا عکس سوال رو بفرستی</div>
+      <div class="chat-wrap" style="height:420px;">
+        <div id="errorSlot"></div>
+        <div class="messages" id="messages"></div>
+        <div id="attachSlot"></div>
+        <div class="composer">
+          <button class="icon-btn" title="آپلود عکس" onclick="document.getElementById('fileInput').click()">📎</button>
+          <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">
+          <textarea id="questionInput" placeholder="مثلاً: مشتق تابع f(x)=x^3-2x را بدست آورید" onkeydown="handleKey(event)"></textarea>
+          <button class="send" id="sendBtn" onclick="sendQuestion()">ارسال</button>
+        </div>
+      </div>`;
+    renderMessages();
+    renderAttachPreview();
+    refreshQuota();
+  }
+}
+
+function selectGrade(id){ state.grade = id; goTo('major'); }
+function selectMajor(id){ state.major = id; state.messages = []; attachedImage = null; goTo('chat'); }
+
+function handleKey(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendQuestion(); } }
+
+function handleFile(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    const result = ev.target.result;
+    const [meta, b64] = result.split(',');
+    const mime = meta.match(/data:(.*);base64/)[1];
+    attachedImage = { mime, base64:b64, previewUrl:result };
+    renderAttachPreview();
+  };
+  reader.readAsDataURL(file);
+}
+function removeAttachment(){ attachedImage=null; document.getElementById('fileInput').value=''; renderAttachPreview(); }
+function renderAttachPreview(){
+  const slot = document.getElementById('attachSlot');
+  if(!slot) return;
+  if(!attachedImage){ slot.innerHTML=''; return; }
+  slot.innerHTML = `<div class="attach-preview"><img src="${attachedImage.previewUrl}"><span>عکس ضمیمه شد</span><button onclick="removeAttachment()">حذف</button></div>`;
+}
+
+function renderMessages(){
+  const box = document.getElementById('messages');
+  if(!box) return;
+  if(state.messages.length === 0){
+    box.innerHTML = `<div class="empty-hint"><span class="glyph">✏️</span>هنوز سوالی نپرسیدی — شروع کن!</div>`;
+    return;
+  }
+  box.innerHTML = state.messages.map(m => {
+    if(m.role==='user'){
+      return `<div class="msg user">${escapeHtml(m.text||'')}${m.imagePreview?`<img src="${m.imagePreview}">`:''}</div>`;
+    } else if(m.role==='assistant'){
+      return `<div class="msg ai"><span class="tick">✔</span><span class="content">${formatAssistantText(m.text)}</span></div>`;
+    } else if(m.role==='loading'){
+      return `<div class="typing"><span></span><span></span><span></span></div>`;
+    }
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+
+  if(window.renderMathInElement){
+    box.querySelectorAll('.msg.ai .content').forEach(el=>{
+      try{
+        renderMathInElement(el, {
+          delimiters:[
+            {left:"$$", right:"$$", display:true},
+            {left:"$", right:"$", display:false},
+            {left:"\\(", right:"\\)", display:false},
+            {left:"\\[", right:"\\]", display:true}
+          ],
+          throwOnError:false
+        });
+      }catch(e){ console.error(e); }
+    });
+  }
+}
+
+function escapeHtml(str){ const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
+function formatAssistantText(raw){
+  let text = escapeHtml(raw||'');
+  text = text.replace(/^---$/gm, '<hr>');
+  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/^\*\s+/gm, '• ');
+  return text;
+}
+
+async function sendQuestion(){
+  const input = document.getElementById('questionInput');
+  const text = input.value.trim();
+  if(!text && !attachedImage) return;
+
+  document.getElementById('errorSlot').innerHTML = '';
+  const userMsg = { role:'user', text, imagePreview: attachedImage ? attachedImage.previewUrl : null };
+  const imageForRequest = attachedImage;
+  state.messages.push(userMsg);
+  state.messages.push({role:'loading'});
+  input.value=''; attachedImage=null;
+  document.getElementById('sendBtn').disabled = true;
+  renderMessages(); renderAttachPreview();
+
+  try{
+    const payload = {
+      grade: state.grade,
+      major: state.major,
+      messages: state.messages
+        .filter(m=>m.role==='user'||m.role==='assistant')
+        .map(m=>({role:m.role, text:m.text})),
+      image: imageForRequest ? { mime: imageForRequest.mime, base64: imageForRequest.base64 } : null
+    };
+
+    const r = await fetch('/api/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const data = await r.json();
+    state.messages.pop();
+
+    if(!r.ok){ throw new Error(data.error || 'خطای نامشخص'); }
+
+    state.messages.push({role:'assistant', text: data.text});
+    if(typeof data.remainingToday === 'number'){
+      const pill = document.getElementById('quotaPill');
+      pill.style.display='inline-block';
+      pill.textContent = `${data.remainingToday} سوال رایگان باقی‌مانده`;
+    }
+  }catch(err){
+    state.messages.pop();
+    document.getElementById('errorSlot').innerHTML = `<div class="error-box">خطا: ${escapeHtml(err.message)}</div>`;
+  }
+  document.getElementById('sendBtn').disabled = false;
+  renderMessages();
+}
+
+render();
+</script>
+</body>
+</html>
