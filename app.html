@@ -20,29 +20,24 @@
     --danger:#FF5C7A; --danger-soft:rgba(255,92,122,0.12);
     --font-fa:'Vazirmatn', sans-serif; --font-mono:'JetBrains Mono', monospace;
     --shadow: 0 24px 60px rgba(0,0,0,0.55);
+    --vh: 1vh;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{ scroll-behavior:smooth; }
   body{
     font-family:var(--font-fa); background:var(--void);
     background-image:
-      radial-gradient(circle at 12% 15%, rgba(124,92,255,0.10), transparent 42%),
-      radial-gradient(circle at 88% 85%, rgba(37,224,204,0.09), transparent 42%);
+      radial-gradient(circle at 12% 10%, rgba(124,92,255,0.08), transparent 40%),
+      radial-gradient(circle at 90% 90%, rgba(37,224,204,0.06), transparent 40%);
     min-height:100vh; color:var(--text-hi);
     display:flex; align-items:center; justify-content:center; padding:24px;
   }
   @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; } }
 
-  .glow-frame{
-    width:100%; max-width:780px; border-radius:21px; padding:1.5px;
-    background:linear-gradient(120deg, var(--violet), var(--cyan), var(--violet));
-    background-size:240% 240%; animation: gradientMove 8s ease infinite; box-shadow:var(--shadow);
-  }
-  @keyframes gradientMove{ 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
-
+  .frame{ width:100%; max-width:780px; }
   .app{
-    background:var(--panel); border-radius:19.5px; min-height:660px; overflow:hidden;
-    display:flex; flex-direction:column; position:relative;
+    background:var(--panel); border:1px solid var(--border); border-radius:20px; min-height:660px; overflow:hidden;
+    display:flex; flex-direction:column; position:relative; box-shadow:var(--shadow);
     animation: appIn 0.5s cubic-bezier(.2,.8,.2,1);
   }
   @keyframes appIn{ from{ opacity:0; transform:translateY(14px) scale(0.985); } to{ opacity:1; transform:translateY(0) scale(1); } }
@@ -52,7 +47,7 @@
     padding:16px 22px; background:var(--deep); border-bottom:1px solid var(--border-soft);
     position:relative; z-index:2; flex-shrink:0;
   }
-  header.topbar .brand{ font-weight:800; font-size:18px; display:flex; align-items:center; gap:9px; white-space:nowrap; }
+  header.topbar .brand{ font-weight:800; font-size:18px; display:flex; align-items:center; gap:8px; white-space:nowrap; }
   .brand-dot{ width:9px; height:9px; border-radius:50%; background:linear-gradient(135deg, var(--violet), var(--cyan)); box-shadow:0 0 10px var(--violet); animation:pulse 2s ease-in-out infinite; }
   @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.5; transform:scale(1.3);} }
   header.topbar .path{ font-family:var(--font-mono); font-size:12px; color:var(--text-mid); opacity:0.9; flex:1; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -64,7 +59,7 @@
   }
   header.topbar button:hover{ border-color:var(--violet); background:var(--violet-soft); transform:translateY(-1px); }
   header.topbar button:disabled{ opacity:0.3; cursor:default; transform:none; }
-  .icon-btn.small{ width:36px; height:36px; border-radius:9px; padding:0; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .icon-btn.small{ width:36px; height:36px; border-radius:9px; padding:0; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:17px; }
   .quota-pill{
     font-family:var(--font-mono); font-size:11px; background:var(--gold-soft); color:var(--gold);
     border:1px solid rgba(255,176,32,0.35); padding:4px 11px; border-radius:20px; white-space:nowrap;
@@ -87,10 +82,9 @@
   .tab-grid .tab-card:nth-child(2){ animation-delay:0.08s; }
   .tab-grid .tab-card:nth-child(3){ animation-delay:0.14s; }
   @keyframes cardIn{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
-  .tab-card:hover{ transform:translateY(-4px); border-color:var(--cyan); box-shadow:0 12px 28px rgba(37,224,204,0.18); }
+  .tab-card:hover{ transform:translateY(-4px); border-color:var(--cyan); box-shadow:0 12px 28px rgba(37,224,204,0.14); }
   .tab-card:active{ transform:translateY(-1px) scale(0.98); }
-  .tab-card .num{ font-family:var(--font-mono); font-size:28px; font-weight:700; display:block; margin-bottom:8px;
-    background:linear-gradient(120deg, var(--violet), var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .tab-card .num{ font-family:var(--font-mono); font-size:26px; font-weight:700; display:block; margin-bottom:8px; color:var(--cyan); }
   .tab-card .label{ font-size:14px; font-weight:700; color:var(--text-hi); }
   .tab-card .desc{ font-size:11.5px; color:var(--text-low); margin-top:5px; }
   .link-btn{ background:none; border:none; color:var(--text-mid); font-family:var(--font-fa); font-size:12.5px; cursor:pointer; text-decoration:underline; padding:0; }
@@ -136,7 +130,7 @@
   .composer textarea:focus{ outline:none; border-color:var(--violet); box-shadow:0 0 0 3px var(--violet-soft); }
   .icon-btn{
     background:var(--elevated); border:1.5px solid var(--border-soft); color:var(--text-hi); border-radius:10px;
-    width:44px; height:44px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    width:44px; height:44px; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center;
     transition:border-color 0.15s, transform 0.15s; flex-shrink:0;
   }
   .icon-btn:hover{ border-color:var(--cyan); transform:translateY(-1px); }
@@ -149,19 +143,26 @@
   .composer button.send:disabled{ background:var(--border); color:var(--text-low); cursor:default; }
 
   .error-box{ background:var(--danger-soft); border:1px solid var(--danger); color:var(--danger); font-size:13px; padding:9px 13px; border-radius:8px; margin-bottom:10px; animation: cardIn 0.25s ease both; }
-  .empty-hint{ text-align:center; color:var(--text-low); font-size:13px; padding:40px 12px; display:flex; flex-direction:column; align-items:center; gap:8px; }
-  .empty-hint .glyph{ font-size:34px; }
+  .empty-hint{ text-align:center; color:var(--text-low); font-size:13px; padding:26px 12px 10px; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .empty-hint .glyph{ font-size:36px; }
+  .suggest-wrap{ display:flex; flex-direction:column; gap:8px; padding:6px 6px 16px; }
+  .suggest-chip{
+    background:var(--elevated); border:1px solid var(--border-soft); color:var(--text-mid); text-align:right;
+    padding:11px 14px; border-radius:11px; font-family:var(--font-fa); font-size:13px; cursor:pointer;
+    transition:border-color .15s, color .15s, transform .15s; display:flex; align-items:center; gap:8px;
+  }
+  .suggest-chip:hover{ border-color:var(--violet); color:var(--text-hi); transform:translateY(-1px); }
 
   /* ---- bottom nav ---- */
   .bottomnav{ display:flex; border-top:1px solid var(--border-soft); background:var(--deep); flex-shrink:0; }
   .bottomnav .nav-btn{
-    flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 4px 12px;
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:9px 4px 11px;
     background:none; border:none; color:var(--text-low); cursor:pointer; font-family:var(--font-fa); font-size:11px;
-    transition:color .15s;
+    transition:color .15s, opacity .15s; opacity:0.6;
   }
-  .bottomnav .nav-btn svg{ transition:filter .15s; }
-  .bottomnav .nav-btn.active{ color:var(--cyan); }
-  .bottomnav .nav-btn.active svg{ filter:drop-shadow(0 0 6px var(--cyan)); }
+  .bottomnav .nav-btn .em{ font-size:21px; line-height:1; filter:grayscale(55%); transition:filter .15s, transform .15s; }
+  .bottomnav .nav-btn.active{ color:var(--cyan); opacity:1; }
+  .bottomnav .nav-btn.active .em{ filter:grayscale(0%); transform:translateY(-1px) scale(1.08); }
 
   /* ---- drawer ---- */
   .drawer-backdrop{ position:absolute; inset:0; background:rgba(4,4,10,0.6); opacity:0; pointer-events:none; transition:opacity .2s; z-index:30; }
@@ -173,6 +174,7 @@
   }
   .drawer-panel.open{ transform:translateX(0); }
   .drawer-head{ display:flex; align-items:center; justify-content:space-between; font-weight:700; font-size:15px; margin-bottom:14px; }
+  .drawer-head button{ background:none; border:none; color:var(--text-mid); font-size:18px; cursor:pointer; padding:4px; }
   .new-chat-btn{
     display:flex; align-items:center; justify-content:center; gap:6px; background:linear-gradient(120deg,var(--violet),var(--cyan));
     color:#080814; border:none; border-radius:10px; padding:10px; font-family:var(--font-fa); font-weight:700; font-size:13.5px;
@@ -184,7 +186,7 @@
   .chat-item .meta{ flex:1; min-width:0; }
   .chat-item .title{ font-size:12.8px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .chat-item .sub{ font-family:var(--font-mono); font-size:10px; color:var(--text-low); margin-top:3px; }
-  .chat-item .del{ background:none; border:none; color:var(--text-low); cursor:pointer; padding:4px; flex-shrink:0; }
+  .chat-item .del{ background:none; border:none; color:var(--text-low); cursor:pointer; padding:4px; flex-shrink:0; font-size:14px; }
   .chat-item .del:hover{ color:var(--danger); }
 
   /* ---- home ---- */
@@ -192,7 +194,7 @@
   .hello{ font-size:20px; font-weight:800; margin-bottom:6px; }
   .path-chip{ display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:12px; color:var(--cyan); background:var(--cyan-soft); border:1px solid rgba(37,224,204,.3); padding:5px 12px; border-radius:20px; }
   .home-card{ background:var(--elevated); border:1px solid var(--border-soft); border-radius:14px; padding:18px; }
-  .home-card h3{ font-size:14px; margin-bottom:8px; }
+  .home-card h3{ font-size:14px; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
   .home-card p{ font-size:12.8px; color:var(--text-mid); line-height:1.85; }
   .continue-btn{
     margin-top:12px; display:inline-flex; align-items:center; gap:6px; background:linear-gradient(120deg,var(--violet),var(--cyan));
@@ -200,7 +202,7 @@
   }
   .stat-row{ display:flex; gap:10px; }
   .stat-box{ flex:1; background:var(--elevated); border:1px solid var(--border-soft); border-radius:12px; padding:14px; text-align:center; }
-  .stat-box .n{ font-family:var(--font-mono); font-weight:700; font-size:20px; background:linear-gradient(120deg,var(--violet),var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .stat-box .n{ font-family:var(--font-mono); font-weight:700; font-size:20px; color:var(--cyan); }
   .stat-box .l{ font-size:11px; color:var(--text-low); margin-top:4px; }
 
   /* ---- account ---- */
@@ -224,15 +226,25 @@
 
   @media (max-width:640px){
     body{ padding:0; align-items:stretch; }
-    .glow-frame{ max-width:100%; border-radius:0; padding:0; background:none; box-shadow:none; }
-    .app{ border-radius:0; min-height:100vh; min-height:100dvh; }
+    .frame{ max-width:100%; }
+    .app{ border-radius:0; border:none; box-shadow:none; min-height:calc(var(--vh, 1vh) * 100); }
   }
 </style>
 </head>
 <body>
-  <div class="glow-frame"><div class="app" id="appRoot"></div></div>
+  <div class="frame"><div class="app" id="appRoot"></div></div>
 
 <script>
+/* fix mobile viewport height (iOS Safari / in-app browsers like Telegram undercount real height) */
+function setRealVH(){
+  const h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+  document.documentElement.style.setProperty('--vh', (h * 0.01) + 'px');
+}
+setRealVH();
+window.addEventListener('resize', setRealVH);
+window.addEventListener('orientationchange', setRealVH);
+if(window.visualViewport) window.visualViewport.addEventListener('resize', setRealVH);
+
 const GRADES = [
   {id:'دهم', label:'دهم', num:'۱۰'},
   {id:'یازدهم', label:'یازدهم', num:'۱۱'},
@@ -243,16 +255,14 @@ const MAJORS = [
   {id:'علوم تجربی', label:'علوم تجربی', desc:'زیست، شیمی، فیزیک'},
   {id:'علوم انسانی', label:'علوم انسانی', desc:'ادبیات، اقتصاد، جامعه‌شناسی'},
 ];
+const SUGGESTIONS = [
+  '📐 یه مسئله مشتق برام حل کن',
+  '🧪 فرمول‌های فصل استوکیومتری رو بگو',
+  '🧬 یه تست تجربی زیست برام حل کن',
+  '📷 عکس یه سوال از کتابمو می‌فرستم، حلش کن'
+];
 
-const ICONS = {
-  home: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h4v-6h3v6h4a1 1 0 0 0 1-1v-9"/></svg>',
-  chat: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4V5Z"/></svg>',
-  account: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-4 4.2-6 7-6s5.8 2 7 6"/></svg>',
-  menu: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
-  plus: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
-  trash: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 1 12a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-12"/></svg>',
-  close: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
-};
+const EM = { home:'🏠', chat:'💬', account:'👤', menu:'☰', plus:'➕', trash:'🗑️', close:'✕' };
 
 const LS_KEY = 'solyar_app_state_v1';
 function loadState(){
@@ -335,14 +345,14 @@ function mainShellHTML(){
     <header class="topbar" id="topHeader"></header>
     <div class="screen-area" id="screenArea"></div>
     <nav class="bottomnav">
-      <button class="nav-btn ${activeTab==='account'?'active':''}" onclick="switchTab('account')">${ICONS.account}<span>اکانت</span></button>
-      <button class="nav-btn ${activeTab==='chat'?'active':''}" onclick="switchTab('chat')">${ICONS.chat}<span>چت</span></button>
-      <button class="nav-btn ${activeTab==='home'?'active':''}" onclick="switchTab('home')">${ICONS.home}<span>خانه</span></button>
+      <button class="nav-btn ${activeTab==='account'?'active':''}" onclick="switchTab('account')"><span class="em">${EM.account}</span><span>اکانت</span></button>
+      <button class="nav-btn ${activeTab==='chat'?'active':''}" onclick="switchTab('chat')"><span class="em">${EM.chat}</span><span>چت</span></button>
+      <button class="nav-btn ${activeTab==='home'?'active':''}" onclick="switchTab('home')"><span class="em">${EM.home}</span><span>خانه</span></button>
     </nav>
     <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
     <div class="drawer-panel" id="drawerPanel">
-      <div class="drawer-head"><span>گفتگوها</span><button class="icon-btn small" onclick="closeDrawer()">${ICONS.close}</button></div>
-      <button class="new-chat-btn" onclick="startNewChatFromDrawer()">${ICONS.plus} چت جدید</button>
+      <div class="drawer-head"><span>گفتگوها</span><button onclick="closeDrawer()">${EM.close}</button></div>
+      <button class="new-chat-btn" onclick="startNewChatFromDrawer()">${EM.plus} چت جدید</button>
       <div class="drawer-list" id="drawerList"></div>
     </div>`;
 }
@@ -358,7 +368,7 @@ function renderHeader(){
   if(activeTab==='chat'){
     const chat = getActiveChat();
     wrap.innerHTML = `
-      <button class="icon-btn small" onclick="openDrawer()">${ICONS.menu}</button>
+      <button class="icon-btn small" onclick="openDrawer()">${EM.menu}</button>
       <div class="path">${chat ? chat.grade+' › '+chat.major : ''}</div>
       <div class="btns"><span class="quota-pill" id="quotaPill" style="display:none;"></span></div>`;
   } else {
@@ -386,7 +396,7 @@ function drawerListHTML(){
         <div class="title">${escapeHtml(c.title || 'گفتگوی جدید')}</div>
         <div class="sub">${c.grade} · ${c.major} · ${relativeTime(c.updatedAt)}</div>
       </div>
-      <button class="del" onclick="event.stopPropagation(); deleteChat('${c.id}')">${ICONS.trash}</button>
+      <button class="del" onclick="event.stopPropagation(); deleteChat('${c.id}')">${EM.trash}</button>
     </div>`).join('');
 }
 function openDrawer(){
@@ -451,15 +461,15 @@ function renderHomeScreen(){
       </div>
       ${last ? `
       <div class="home-card">
-        <h3>ادامه‌ی آخرین گفتگو</h3>
+        <h3>💬 ادامه‌ی آخرین گفتگو</h3>
         <p>${escapeHtml(last.title || 'گفتگوی جدید')}</p>
-        <button class="continue-btn" onclick="openChat('${last.id}')">${ICONS.chat} ادامه بده</button>
+        <button class="continue-btn" onclick="openChat('${last.id}')">ادامه بده ←</button>
       </div>` : ''}
       <div class="home-card">
-        <h3>حل‌یار چیه؟</h3>
+        <h3>📘 حل‌یار چیه؟</h3>
         <p>دستیار هوش‌مصنوعی کنکوره که دقیقاً با روش و ترتیب کتاب درسی خودت، قدم‌به‌قدم سوالاتتو حل می‌کنه — نه با روش‌های دانشگاهی یا خارج از چارچوب کنکور. متن سوال رو بنویس یا عکسشو بفرست.</p>
       </div>
-      <button class="continue-btn" onclick="startNewChat()">${ICONS.plus} گفتگوی جدید</button>
+      <button class="continue-btn" onclick="startNewChat()">${EM.plus} گفتگوی جدید</button>
       <button class="link-btn" onclick="startChangeFlow()">تغییر پایه یا رشته</button>
     </div>`;
   refreshQuota();
@@ -512,13 +522,22 @@ function formatAssistantText(raw){
   text = text.replace(/^\*\s+/gm, '• ');
   return text;
 }
+function useSuggestion(text){
+  const clean = text.replace(/^\S+\s/, '');
+  const input = document.getElementById('questionInput');
+  if(input){ input.value = clean; input.focus(); }
+}
 function renderMessages(){
   const box = document.getElementById('messages');
   if(!box) return;
   const chat = getActiveChat();
   const msgs = chat ? chat.messages : [];
   if(msgs.length === 0){
-    box.innerHTML = `<div class="empty-hint"><span class="glyph">✏️</span>هنوز سوالی نپرسیدی — شروع کن!</div>`;
+    box.innerHTML = `
+      <div class="empty-hint"><span class="glyph">✏️</span>هنوز سوالی نپرسیدی — یکی از اینا رو امتحان کن:</div>
+      <div class="suggest-wrap">
+        ${SUGGESTIONS.map(s=>`<div class="suggest-chip" onclick="useSuggestion('${s.replace(/'/g,"\\'")}')">${s}</div>`).join('')}
+      </div>`;
     return;
   }
   box.innerHTML = msgs.map(m => {
