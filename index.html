@@ -11,72 +11,43 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <style>
   :root{
-    --void:#07070E;
-    --deep:#0C0E19;
-    --panel:#12142A;
-    --elevated:#191C36;
-    --border:#282B4C;
-    --border-soft:#1E2140;
-    --text-hi:#F4F2FF;
-    --text-mid:#A9A6C9;
-    --text-low:#68668A;
-    --violet:#7C5CFF;
-    --violet-soft:rgba(124,92,255,0.14);
-    --cyan:#25E0CC;
-    --cyan-soft:rgba(37,224,204,0.12);
-    --gold:#FFB020;
-    --gold-soft:rgba(255,176,32,0.14);
-    --font-fa:'Vazirmatn', sans-serif;
-    --font-mono:'JetBrains Mono', monospace;
+    --void:#07070E; --deep:#0C0E19; --panel:#12142A; --elevated:#191C36;
+    --border:#2C2F52; --border-soft:#1E2140;
+    --text-hi:#F4F2FF; --text-mid:#A9A6C9; --text-low:#68668A;
+    --violet:#7C5CFF; --violet-soft:rgba(124,92,255,0.14);
+    --cyan:#25E0CC; --cyan-soft:rgba(37,224,204,0.12);
+    --gold:#FFB020; --gold-soft:rgba(255,176,32,0.14);
+    --font-fa:'Vazirmatn', sans-serif; --font-mono:'JetBrains Mono', monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{ scroll-behavior:smooth; }
   body{
-    font-family:var(--font-fa);
-    background:var(--void);
-    color:var(--text-hi);
-    overflow-x:hidden;
-    position:relative;
+    font-family:var(--font-fa); background:var(--void); color:var(--text-hi); overflow-x:hidden; position:relative;
   }
+  /* بافت ظریف خطوط دفتر، به‌جای گرید تکنولوژیک ژنریک */
   body::before{
-    content:'';
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-    background-image:
-      linear-gradient(var(--border-soft) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
-    background-size:64px 64px;
-    opacity:0.35;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 70%);
+    content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image: repeating-linear-gradient(to bottom, transparent 0 27px, var(--border-soft) 27px 28px);
+    opacity:0.4;
+    mask-image: radial-gradient(ellipse 75% 55% at 50% 0%, black 0%, transparent 72%);
+    -webkit-mask-image: radial-gradient(ellipse 75% 55% at 50% 0%, black 0%, transparent 72%);
   }
   @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; } }
 
   .wrap{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 24px; }
 
   /* ---------- nav ---------- */
-  nav{
-    position:sticky; top:0; z-index:50;
-    background:rgba(7,7,14,0.72); backdrop-filter:blur(14px);
-    border-bottom:1px solid var(--border-soft);
-  }
+  nav{ position:sticky; top:0; z-index:50; background:rgba(7,7,14,0.75); backdrop-filter:blur(14px); border-bottom:1px solid var(--border-soft); }
   nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:66px; }
-  .brand{ display:flex; align-items:center; gap:9px; font-weight:800; font-size:19px; }
+  .brand{ display:flex; align-items:center; gap:8px; font-weight:800; font-size:19px; }
   .brand .dot{ width:9px; height:9px; border-radius:50%; background:linear-gradient(135deg, var(--violet), var(--cyan)); box-shadow:0 0 12px var(--violet); }
   nav .cta-mini{
-    background:linear-gradient(120deg, var(--violet), var(--cyan));
-    color:#080814; font-weight:700; font-size:13.5px; padding:9px 20px;
-    border-radius:8px; text-decoration:none; transition:transform .15s, box-shadow .15s;
+    background:linear-gradient(120deg, var(--violet), var(--cyan)); color:#080814; font-weight:700; font-size:13.5px;
+    padding:9px 20px; border-radius:8px; text-decoration:none; transition:transform .15s, box-shadow .15s;
   }
   nav .cta-mini:hover{ transform:translateY(-1px); box-shadow:0 8px 22px rgba(124,92,255,0.35); }
 
-  /* ---------- glow border utility ---------- */
-  .glow-frame{
-    position:relative; border-radius:20px; padding:1.5px;
-    background:linear-gradient(120deg, var(--violet), var(--cyan), var(--violet));
-    background-size:240% 240%;
-    animation: gradientMove 7s ease infinite;
-  }
-  @keyframes gradientMove{ 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
-  .glow-frame > .glow-inner{ border-radius:18.5px; background:var(--panel); height:100%; }
+  .panel-card{ border-radius:20px; border:1px solid var(--border); background:var(--panel); box-shadow:0 20px 50px rgba(0,0,0,0.4); }
 
   /* ---------- hero ---------- */
   .hero{ padding:76px 0 40px; }
@@ -86,14 +57,8 @@
     color:var(--cyan); background:var(--cyan-soft); border:1px solid rgba(37,224,204,0.3);
     padding:6px 12px; border-radius:20px; margin-bottom:20px; letter-spacing:0.3px;
   }
-  h1{
-    font-size:44px; font-weight:900; line-height:1.28; letter-spacing:-0.5px;
-    margin-bottom:20px;
-  }
-  h1 .grad{
-    background:linear-gradient(120deg, var(--violet), var(--cyan));
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
+  h1{ font-size:44px; font-weight:900; line-height:1.28; letter-spacing:-0.5px; margin-bottom:20px; }
+  h1 .hl{ color:var(--violet); }
   .hero p.sub{ font-size:16.5px; line-height:1.9; color:var(--text-mid); max-width:520px; margin-bottom:32px; }
   .hero-ctas{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:36px; }
   .btn-primary{
@@ -108,12 +73,9 @@
   }
   .btn-ghost:hover{ border-color:var(--violet); background:var(--violet-soft); }
   .chip-row{ display:flex; gap:8px; flex-wrap:wrap; }
-  .chip{
-    font-family:var(--font-mono); font-size:12px; color:var(--text-mid); background:var(--elevated);
-    border:1px solid var(--border-soft); padding:6px 13px; border-radius:20px;
-  }
+  .chip{ font-family:var(--font-mono); font-size:12px; color:var(--text-mid); background:var(--elevated); border:1px solid var(--border-soft); padding:6px 13px; border-radius:20px; }
 
-  /* ---------- demo panel (signature) ---------- */
+  /* ---------- demo panel ---------- */
   .demo-panel{ min-height:420px; padding:22px; display:flex; flex-direction:column; }
   .demo-topbar{ display:flex; align-items:center; gap:7px; margin-bottom:18px; }
   .demo-topbar span.tdot{ width:8px; height:8px; border-radius:50%; background:var(--border); }
@@ -123,10 +85,7 @@
     color:var(--text-hi); font-size:13.5px; line-height:1.9; padding:10px 14px; border-radius:10px 10px 10px 2px;
     max-width:88%; margin-bottom:16px; opacity:0; animation: revealUp .5s ease forwards; animation-delay:.2s;
   }
-  .demo-step{
-    display:flex; gap:10px; margin-bottom:14px; opacity:0; animation: revealUp .5s ease forwards;
-    font-size:13.5px; line-height:2.1;
-  }
+  .demo-step{ display:flex; gap:10px; margin-bottom:14px; opacity:0; animation: revealUp .5s ease forwards; font-size:13.5px; line-height:2.1; }
   .demo-step:nth-child(3){ animation-delay:1.0s; }
   .demo-step:nth-child(4){ animation-delay:1.9s; }
   .demo-step:nth-child(5){ animation-delay:2.8s; }
@@ -135,10 +94,7 @@
   .demo-step .txt strong{ color:var(--text-hi); font-weight:700; }
   .demo-step .katex{ color:var(--cyan); font-size:1.05em; }
   @keyframes revealUp{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
-  .demo-badge{
-    margin-top:auto; padding-top:14px; border-top:1px dashed var(--border-soft);
-    display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11.5px; color:var(--text-low);
-  }
+  .demo-badge{ margin-top:auto; padding-top:14px; border-top:1px dashed var(--border-soft); display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11.5px; color:var(--text-low); }
   .demo-badge .lp{ width:6px; height:6px; border-radius:50%; background:var(--gold); box-shadow:0 0 8px var(--gold); animation:pulse 1.8s ease-in-out infinite; }
   @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
@@ -146,7 +102,7 @@
   .stats{ border-top:1px solid var(--border-soft); border-bottom:1px solid var(--border-soft); padding:26px 0; margin-top:40px; }
   .stats .wrap{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px; }
   .stat{ text-align:center; flex:1; min-width:120px; }
-  .stat .num{ font-family:var(--font-mono); font-size:26px; font-weight:700; background:linear-gradient(120deg, var(--violet), var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .stat .num{ font-family:var(--font-mono); font-size:26px; font-weight:700; color:var(--cyan); }
   .stat .lbl{ font-size:12.5px; color:var(--text-low); margin-top:4px; }
 
   /* ---------- section shared ---------- */
@@ -157,11 +113,8 @@
   .section-head p{ color:var(--text-mid); font-size:15px; line-height:1.8; }
 
   /* ---------- steps ---------- */
-  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; position:relative; }
-  .step-card{
-    background:var(--panel); border:1px solid var(--border-soft); border-radius:16px; padding:28px 22px;
-    position:relative; transition:border-color .2s, transform .2s;
-  }
+  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .step-card{ background:var(--panel); border:1px solid var(--border-soft); border-radius:16px; padding:28px 22px; transition:border-color .2s, transform .2s; }
   .step-card:hover{ border-color:var(--violet); transform:translateY(-4px); }
   .step-card .idx{ font-family:var(--font-mono); font-size:13px; color:var(--cyan); margin-bottom:16px; display:block; }
   .step-card h3{ font-size:17px; font-weight:700; margin-bottom:10px; }
@@ -169,29 +122,20 @@
 
   /* ---------- features ---------- */
   .features{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
-  .feat-card{
-    background:var(--elevated); border:1px solid var(--border-soft); border-radius:16px; padding:26px 20px;
-    transition:transform .2s, box-shadow .2s, border-color .2s;
-  }
-  .feat-card:hover{ transform:translateY(-4px); border-color:var(--cyan); box-shadow:0 16px 34px rgba(37,224,204,0.12); }
-  .feat-card .ic{ font-size:24px; margin-bottom:14px; display:block; }
+  .feat-card{ background:var(--elevated); border:1px solid var(--border-soft); border-radius:16px; padding:26px 20px; transition:transform .2s, box-shadow .2s, border-color .2s; }
+  .feat-card:hover{ transform:translateY(-4px); border-color:var(--cyan); box-shadow:0 16px 34px rgba(37,224,204,0.1); }
+  .feat-card .ic{ font-size:26px; margin-bottom:14px; display:block; }
   .feat-card h3{ font-size:15px; font-weight:700; margin-bottom:8px; }
   .feat-card p{ font-size:12.8px; color:var(--text-mid); line-height:1.8; }
 
   /* ---------- path preview ---------- */
-  .path-preview{
-    display:flex; justify-content:center; align-items:center; gap:14px; flex-wrap:wrap;
-  }
+  .path-preview{ display:flex; justify-content:center; align-items:center; gap:14px; flex-wrap:wrap; }
   .path-col{ display:flex; flex-direction:column; gap:10px; }
-  .path-pill{
-    font-family:var(--font-mono); font-size:13px; text-align:center; padding:11px 18px; border-radius:10px;
-    background:var(--panel); border:1px solid var(--border-soft); color:var(--text-mid);
-  }
+  .path-pill{ font-family:var(--font-mono); font-size:13px; text-align:center; padding:11px 18px; border-radius:10px; background:var(--panel); border:1px solid var(--border-soft); color:var(--text-mid); }
   .path-x{ color:var(--text-low); font-size:18px; }
 
   /* ---------- final cta ---------- */
-  .cta-band{ text-align:center; padding:2px; border-radius:24px; }
-  .cta-band .inner{ border-radius:22.5px; padding:62px 30px; text-align:center; }
+  .cta-band{ text-align:center; padding:62px 30px; }
   .cta-band h2{ font-size:30px; font-weight:800; margin-bottom:14px; }
   .cta-band p{ color:var(--text-mid); font-size:15px; margin-bottom:28px; }
 
@@ -219,8 +163,8 @@
 <div class="wrap hero">
   <div class="hero-grid">
     <div>
-      <span class="eyebrow">✦ دستیار هوش مصنوعی کنکور</span>
-      <h1>هر سوال، حل‌شده <span class="grad">عین کتاب درسی</span> خودت</h1>
+      <span class="eyebrow">✨ دستیار هوش مصنوعی کنکور</span>
+      <h1>هر سوال، حل‌شده <span class="hl">عین کتاب درسی</span> خودت</h1>
       <p class="sub">پایه و رشته‌ت رو انتخاب کن، سوالتو بنویس یا عکسشو بفرست. حل‌یار دقیقاً با روش و ترتیب همون فصل کتاب درسی، قدم‌به‌قدم حلش می‌کنه — نه با روش‌های دانشگاهی و خارج از چارچوب کنکور.</p>
       <div class="hero-ctas">
         <a class="btn-primary" href="app.html">شروع رایگان ←</a>
@@ -236,18 +180,16 @@
       </div>
     </div>
 
-    <div class="glow-frame">
-      <div class="glow-inner demo-panel">
-        <div class="demo-topbar">
-          <span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>
-          <span class="tlabel">حل‌یار · پایه یازدهم · ریاضی‌فیزیک</span>
-        </div>
-        <div class="demo-q">مشتق تابع $f(x)=x^3-2x$ رو به‌دست بیار.</div>
-        <div class="demo-step"><span class="tick">✔</span><span class="txt">طبق فصل «مشتق» کتاب حسابان، از قاعده‌ی توان استفاده می‌کنیم:</span></div>
-        <div class="demo-step"><span class="tick">✔</span><span class="txt">$\dfrac{d}{dx}x^n = nx^{n-1}$ روی هر جمله اعمال می‌شه.</span></div>
-        <div class="demo-step"><span class="tick">✔</span><span class="txt">پس <strong>$f'(x) = 3x^2 - 2$</strong> — دقیقاً به روش کتاب درسی.</span></div>
-        <div class="demo-badge"><span class="lp"></span>در حال حل طبق کتاب درسی…</div>
+    <div class="panel-card demo-panel">
+      <div class="demo-topbar">
+        <span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>
+        <span class="tlabel">حل‌یار · پایه یازدهم · ریاضی‌فیزیک</span>
       </div>
+      <div class="demo-q">مشتق تابع $f(x)=x^3-2x$ رو به‌دست بیار.</div>
+      <div class="demo-step"><span class="tick">✔</span><span class="txt">طبق فصل «مشتق» کتاب حسابان، از قاعده‌ی توان استفاده می‌کنیم:</span></div>
+      <div class="demo-step"><span class="tick">✔</span><span class="txt">$\dfrac{d}{dx}x^n = nx^{n-1}$ روی هر جمله اعمال می‌شه.</span></div>
+      <div class="demo-step"><span class="tick">✔</span><span class="txt">پس <strong>$f'(x) = 3x^2 - 2$</strong> — دقیقاً به روش کتاب درسی.</span></div>
+      <div class="demo-badge"><span class="lp"></span>در حال حل طبق کتاب درسی…</div>
     </div>
   </div>
 </div>
@@ -296,26 +238,10 @@
       <p>هر تصمیم طراحی این ابزار حول یه چیز می‌چرخه: عین کتاب درسی خودت حل کنه.</p>
     </div>
     <div class="features">
-      <div class="feat-card">
-        <span class="ic">📘</span>
-        <h3>کتاب‌محور، نه دانشگاهی</h3>
-        <p>از روش‌های خارج از چارچوب کنکور استفاده نمی‌کنه؛ دقیقاً با سرفصل کتاب همون پایه و رشته جواب می‌ده.</p>
-      </div>
-      <div class="feat-card">
-        <span class="ic">∑</span>
-        <h3>فرمول‌نویسی درست</h3>
-        <p>فرمول‌های ریاضی و فیزیک با KaTeX رندر می‌شن — دقیقاً خوانا، نه متن به‌هم‌ریخته.</p>
-      </div>
-      <div class="feat-card">
-        <span class="ic">📷</span>
-        <h3>عکس سوال هم قبوله</h3>
-        <p>لازم نیست تایپ کنی؛ از رو کتاب یا دفترت عکس بگیر، خودش می‌خونه و حل می‌کنه.</p>
-      </div>
-      <div class="feat-card">
-        <span class="ic">⚡</span>
-        <h3>هر روز رایگان</h3>
-        <p>بدون نیاز به کارت یا خرید؛ هر روز چندتا سوال رایگان تو سهمیه‌ته.</p>
-      </div>
+      <div class="feat-card"><span class="ic">📘</span><h3>کتاب‌محور، نه دانشگاهی</h3><p>از روش‌های خارج از چارچوب کنکور استفاده نمی‌کنه؛ دقیقاً با سرفصل کتاب همون پایه و رشته جواب می‌ده.</p></div>
+      <div class="feat-card"><span class="ic">🧮</span><h3>فرمول‌نویسی درست</h3><p>فرمول‌های ریاضی و فیزیک با KaTeX رندر می‌شن — دقیقاً خوانا، نه متن به‌هم‌ریخته.</p></div>
+      <div class="feat-card"><span class="ic">📸</span><h3>عکس سوال هم قبوله</h3><p>لازم نیست تایپ کنی؛ از رو کتاب یا دفترت عکس بگیر، خودش می‌خونه و حل می‌کنه.</p></div>
+      <div class="feat-card"><span class="ic">⚡</span><h3>هر روز رایگان</h3><p>بدون نیاز به کارت یا خرید؛ هر روز چندتا سوال رایگان تو سهمیه‌ته.</p></div>
     </div>
   </div>
 </section>
@@ -343,12 +269,10 @@
 </section>
 
 <div class="wrap">
-  <div class="glow-frame cta-band">
-    <div class="glow-inner inner">
-      <h2>امروز شروع کن</h2>
-      <p>اولین سوالتو بفرست و ببین حل‌یار چطور دقیقاً مثل کتاب درسیت حلش می‌کنه.</p>
-      <a class="btn-primary" href="app.html">شروع رایگان ←</a>
-    </div>
+  <div class="panel-card cta-band">
+    <h2>امروز شروع کن</h2>
+    <p>اولین سوالتو بفرست و ببین حل‌یار چطور دقیقاً مثل کتاب درسیت حلش می‌کنه.</p>
+    <a class="btn-primary" href="app.html">شروع رایگان ←</a>
   </div>
 </div>
 
@@ -361,25 +285,16 @@
 </footer>
 
 <script>
-  if(window.renderMathInElement){
-    renderMathInElement(document.body, {
-      delimiters:[
-        {left:"$$", right:"$$", display:true},
-        {left:"$", right:"$", display:false}
-      ],
-      throwOnError:false
-    });
-  } else {
-    document.addEventListener('DOMContentLoaded', function(){
-      if(window.renderMathInElement){
-        renderMathInElement(document.body, {
-          delimiters:[{left:"$$", right:"$$", display:true},{left:"$", right:"$", display:false}],
-          throwOnError:false
-        });
-      }
-    });
+  function doRender(){
+    if(window.renderMathInElement){
+      renderMathInElement(document.body, {
+        delimiters:[{left:"$$", right:"$$", display:true},{left:"$", right:"$", display:false}],
+        throwOnError:false
+      });
+    }
   }
+  document.addEventListener('DOMContentLoaded', doRender);
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" onload="doRender()"></script>
 </body>
 </html>
