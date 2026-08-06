@@ -11,64 +11,51 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <style>
   :root{
-    --void:#07070E;
-    --deep:#0C0E19;
-    --panel:#12142A;
-    --elevated:#191C36;
-    --elevated-2:#1F2242;
-    --border:#2C2F52;
-    --border-soft:#1E2140;
-    --text-hi:#F4F2FF;
-    --text-mid:#A9A6C9;
-    --text-low:#68668A;
-    --violet:#7C5CFF;
-    --violet-soft:rgba(124,92,255,0.14);
-    --cyan:#25E0CC;
-    --cyan-soft:rgba(37,224,204,0.12);
-    --gold:#FFB020;
-    --gold-soft:rgba(255,176,32,0.14);
-    --danger:#FF5C7A;
-    --danger-soft:rgba(255,92,122,0.12);
-    --font-fa:'Vazirmatn', sans-serif;
-    --font-mono:'JetBrains Mono', monospace;
+    --void:#07070E; --deep:#0C0E19; --panel:#12142A; --elevated:#191C36; --elevated-2:#1F2242;
+    --border:#2C2F52; --border-soft:#1E2140;
+    --text-hi:#F4F2FF; --text-mid:#A9A6C9; --text-low:#68668A;
+    --violet:#7C5CFF; --violet-soft:rgba(124,92,255,0.14);
+    --cyan:#25E0CC; --cyan-soft:rgba(37,224,204,0.12);
+    --gold:#FFB020; --gold-soft:rgba(255,176,32,0.14);
+    --danger:#FF5C7A; --danger-soft:rgba(255,92,122,0.12);
+    --font-fa:'Vazirmatn', sans-serif; --font-mono:'JetBrains Mono', monospace;
     --shadow: 0 24px 60px rgba(0,0,0,0.55);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{ scroll-behavior:smooth; }
   body{
-    font-family:var(--font-fa);
-    background:var(--void);
+    font-family:var(--font-fa); background:var(--void);
     background-image:
       radial-gradient(circle at 12% 15%, rgba(124,92,255,0.10), transparent 42%),
       radial-gradient(circle at 88% 85%, rgba(37,224,204,0.09), transparent 42%);
     min-height:100vh; color:var(--text-hi);
     display:flex; align-items:center; justify-content:center; padding:24px;
   }
-  @media (prefers-reduced-motion: reduce){ body{animation:none;} *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; } }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; } }
 
   .glow-frame{
     width:100%; max-width:780px; border-radius:21px; padding:1.5px;
     background:linear-gradient(120deg, var(--violet), var(--cyan), var(--violet));
-    background-size:240% 240%; animation: gradientMove 8s ease infinite;
-    box-shadow:var(--shadow);
+    background-size:240% 240%; animation: gradientMove 8s ease infinite; box-shadow:var(--shadow);
   }
   @keyframes gradientMove{ 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
 
   .app{
     background:var(--panel); border-radius:19.5px; min-height:660px; overflow:hidden;
-    display:flex; flex-direction:column; animation: appIn 0.5s cubic-bezier(.2,.8,.2,1);
+    display:flex; flex-direction:column; position:relative;
+    animation: appIn 0.5s cubic-bezier(.2,.8,.2,1);
   }
   @keyframes appIn{ from{ opacity:0; transform:translateY(14px) scale(0.985); } to{ opacity:1; transform:translateY(0) scale(1); } }
 
   header.topbar{
-    display:flex; align-items:center; justify-content:space-between;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
     padding:16px 22px; background:var(--deep); border-bottom:1px solid var(--border-soft);
-    position:relative; z-index:2;
+    position:relative; z-index:2; flex-shrink:0;
   }
-  header.topbar .brand{ font-weight:800; font-size:18px; display:flex; align-items:center; gap:9px; }
+  header.topbar .brand{ font-weight:800; font-size:18px; display:flex; align-items:center; gap:9px; white-space:nowrap; }
   .brand-dot{ width:9px; height:9px; border-radius:50%; background:linear-gradient(135deg, var(--violet), var(--cyan)); box-shadow:0 0 10px var(--violet); animation:pulse 2s ease-in-out infinite; }
   @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.5; transform:scale(1.3);} }
-  header.topbar .path{ font-family:var(--font-mono); font-size:12px; color:var(--text-mid); opacity:0.9; }
+  header.topbar .path{ font-family:var(--font-mono); font-size:12px; color:var(--text-mid); opacity:0.9; flex:1; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   header.topbar .btns{ display:flex; gap:8px; align-items:center; }
   header.topbar button{
     background:transparent; border:1px solid var(--border); color:var(--text-hi);
@@ -77,16 +64,17 @@
   }
   header.topbar button:hover{ border-color:var(--violet); background:var(--violet-soft); transform:translateY(-1px); }
   header.topbar button:disabled{ opacity:0.3; cursor:default; transform:none; }
+  .icon-btn.small{ width:36px; height:36px; border-radius:9px; padding:0; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .quota-pill{
     font-family:var(--font-mono); font-size:11px; background:var(--gold-soft); color:var(--gold);
-    border:1px solid rgba(255,176,32,0.35); padding:4px 11px; border-radius:20px;
+    border:1px solid rgba(255,176,32,0.35); padding:4px 11px; border-radius:20px; white-space:nowrap;
   }
 
-  .screen-area{ flex:1; padding:28px; overflow-y:auto; }
-  .screen{ animation: screenIn 0.35s cubic-bezier(.2,.8,.2,1); }
-  @keyframes screenIn{ from{ opacity:0; transform:translateX(8px); } to{ opacity:1; transform:translateX(0); } }
-  .screen-title{ font-size:25px; font-weight:800; margin-bottom:6px; letter-spacing:-0.2px; }
-  .screen-sub{ font-size:13.5px; color:var(--text-mid); margin-bottom:26px; }
+  .screen-area{ flex:1; padding:24px; min-height:0; }
+  .screen{ animation: screenIn 0.3s cubic-bezier(.2,.8,.2,1); }
+  @keyframes screenIn{ from{ opacity:0; transform:translateX(6px); } to{ opacity:1; transform:translateX(0); } }
+  .screen-title{ font-size:24px; font-weight:800; margin-bottom:6px; letter-spacing:-0.2px; }
+  .screen-sub{ font-size:13.5px; color:var(--text-mid); margin-bottom:24px; }
 
   .tab-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
   .tab-card{
@@ -105,9 +93,11 @@
     background:linear-gradient(120deg, var(--violet), var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .tab-card .label{ font-size:14px; font-weight:700; color:var(--text-hi); }
   .tab-card .desc{ font-size:11.5px; color:var(--text-low); margin-top:5px; }
+  .link-btn{ background:none; border:none; color:var(--text-mid); font-family:var(--font-fa); font-size:12.5px; cursor:pointer; text-decoration:underline; padding:0; }
 
+  /* ---- chat ---- */
   .chat-wrap{ display:flex; flex-direction:column; height:100%; }
-  .messages{ flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:16px; padding-bottom:12px; }
+  .messages{ flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:16px; padding-bottom:12px; min-height:0; }
   .msg{ max-width:88%; animation: msgIn 0.3s cubic-bezier(.2,.8,.2,1); }
   @keyframes msgIn{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
   .msg.user{
@@ -123,23 +113,20 @@
   .msg.ai .content hr{ border:none; border-top:1px dashed var(--border-soft); margin:10px 0; }
 
   .typing{ align-self:flex-end; display:flex; gap:4px; padding:6px 4px; }
-  .typing span{
-    width:6px; height:6px; border-radius:50%; background:var(--cyan); opacity:0.7;
-    animation: bounce 1.2s infinite ease-in-out; box-shadow:0 0 6px var(--cyan);
-  }
+  .typing span{ width:6px; height:6px; border-radius:50%; background:var(--cyan); opacity:0.7; animation: bounce 1.2s infinite ease-in-out; box-shadow:0 0 6px var(--cyan); }
   .typing span:nth-child(2){ animation-delay:0.15s; }
   .typing span:nth-child(3){ animation-delay:0.3s; }
   @keyframes bounce{ 0%,60%,100%{ transform:translateY(0); opacity:0.5;} 30%{ transform:translateY(-5px); opacity:1;} }
 
   .attach-preview{
-    display:flex; align-items:center; gap:10px; background:var(--elevated);
-    border:1px dashed var(--border); border-radius:8px; padding:8px 10px; margin-bottom:8px;
-    font-size:12.5px; color:var(--text-mid); animation: cardIn 0.25s ease both;
+    display:flex; align-items:center; gap:10px; background:var(--elevated); border:1px dashed var(--border);
+    border-radius:8px; padding:8px 10px; margin-bottom:8px; font-size:12.5px; color:var(--text-mid);
+    animation: cardIn 0.25s ease both;
   }
   .attach-preview img{ width:44px; height:44px; object-fit:cover; border-radius:6px; }
   .attach-preview button{ margin-right:auto; background:none; border:none; color:var(--danger); cursor:pointer; font-size:12.5px; font-family:var(--font-fa); }
 
-  .composer{ display:flex; gap:8px; padding-top:14px; border-top:1px dashed var(--border-soft); align-items:flex-end; }
+  .composer{ display:flex; gap:8px; padding-top:14px; border-top:1px dashed var(--border-soft); align-items:flex-end; flex-shrink:0; }
   .composer textarea{
     flex:1; resize:none; font-family:var(--font-fa); font-size:14px; border:1.5px solid var(--border-soft);
     border-radius:10px; padding:11px 13px; background:var(--elevated); color:var(--text-hi);
@@ -150,46 +137,100 @@
   .icon-btn{
     background:var(--elevated); border:1.5px solid var(--border-soft); color:var(--text-hi); border-radius:10px;
     width:44px; height:44px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-    transition:border-color 0.15s, transform 0.15s;
+    transition:border-color 0.15s, transform 0.15s; flex-shrink:0;
   }
   .icon-btn:hover{ border-color:var(--cyan); transform:translateY(-1px); }
   .composer button.send{
     background:linear-gradient(120deg, var(--violet), var(--cyan)); color:#080814; border:none; border-radius:10px;
     padding:0 22px; height:44px; font-family:var(--font-fa); font-weight:700; font-size:14px; cursor:pointer;
-    transition:transform 0.15s, box-shadow 0.15s; position:relative; overflow:hidden;
+    transition:transform 0.15s, box-shadow 0.15s; flex-shrink:0;
   }
   .composer button.send:hover:not(:disabled){ transform:translateY(-1px); box-shadow:0 10px 26px rgba(124,92,255,0.35); }
-  .composer button.send:active:not(:disabled){ transform:translateY(0); }
   .composer button.send:disabled{ background:var(--border); color:var(--text-low); cursor:default; }
 
-  .error-box{
-    background:var(--danger-soft); border:1px solid var(--danger); color:var(--danger); font-size:13px;
-    padding:9px 13px; border-radius:8px; margin-bottom:10px; animation: cardIn 0.25s ease both;
-  }
-  .empty-hint{
-    text-align:center; color:var(--text-low); font-size:13px; padding:40px 12px;
-    display:flex; flex-direction:column; align-items:center; gap:8px;
-  }
+  .error-box{ background:var(--danger-soft); border:1px solid var(--danger); color:var(--danger); font-size:13px; padding:9px 13px; border-radius:8px; margin-bottom:10px; animation: cardIn 0.25s ease both; }
+  .empty-hint{ text-align:center; color:var(--text-low); font-size:13px; padding:40px 12px; display:flex; flex-direction:column; align-items:center; gap:8px; }
   .empty-hint .glyph{ font-size:34px; }
+
+  /* ---- bottom nav ---- */
+  .bottomnav{ display:flex; border-top:1px solid var(--border-soft); background:var(--deep); flex-shrink:0; }
+  .bottomnav .nav-btn{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 4px 12px;
+    background:none; border:none; color:var(--text-low); cursor:pointer; font-family:var(--font-fa); font-size:11px;
+    transition:color .15s;
+  }
+  .bottomnav .nav-btn svg{ transition:filter .15s; }
+  .bottomnav .nav-btn.active{ color:var(--cyan); }
+  .bottomnav .nav-btn.active svg{ filter:drop-shadow(0 0 6px var(--cyan)); }
+
+  /* ---- drawer ---- */
+  .drawer-backdrop{ position:absolute; inset:0; background:rgba(4,4,10,0.6); opacity:0; pointer-events:none; transition:opacity .2s; z-index:30; }
+  .drawer-backdrop.open{ opacity:1; pointer-events:auto; }
+  .drawer-panel{
+    position:absolute; top:0; right:0; height:100%; width:82%; max-width:300px; background:var(--deep);
+    border-left:1px solid var(--border-soft); z-index:31; transform:translateX(100%);
+    transition:transform .25s cubic-bezier(.2,.8,.2,1); display:flex; flex-direction:column; padding:18px 14px;
+  }
+  .drawer-panel.open{ transform:translateX(0); }
+  .drawer-head{ display:flex; align-items:center; justify-content:space-between; font-weight:700; font-size:15px; margin-bottom:14px; }
+  .new-chat-btn{
+    display:flex; align-items:center; justify-content:center; gap:6px; background:linear-gradient(120deg,var(--violet),var(--cyan));
+    color:#080814; border:none; border-radius:10px; padding:10px; font-family:var(--font-fa); font-weight:700; font-size:13.5px;
+    cursor:pointer; margin-bottom:14px; flex-shrink:0;
+  }
+  .drawer-list{ flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+  .chat-item{ display:flex; align-items:center; gap:8px; background:var(--elevated); border:1px solid var(--border-soft); border-radius:10px; padding:10px 12px; cursor:pointer; transition:border-color .15s; }
+  .chat-item.active{ border-color:var(--cyan); }
+  .chat-item .meta{ flex:1; min-width:0; }
+  .chat-item .title{ font-size:12.8px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .chat-item .sub{ font-family:var(--font-mono); font-size:10px; color:var(--text-low); margin-top:3px; }
+  .chat-item .del{ background:none; border:none; color:var(--text-low); cursor:pointer; padding:4px; flex-shrink:0; }
+  .chat-item .del:hover{ color:var(--danger); }
+
+  /* ---- home ---- */
+  .home-wrap{ display:flex; flex-direction:column; gap:14px; }
+  .hello{ font-size:20px; font-weight:800; margin-bottom:6px; }
+  .path-chip{ display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:12px; color:var(--cyan); background:var(--cyan-soft); border:1px solid rgba(37,224,204,.3); padding:5px 12px; border-radius:20px; }
+  .home-card{ background:var(--elevated); border:1px solid var(--border-soft); border-radius:14px; padding:18px; }
+  .home-card h3{ font-size:14px; margin-bottom:8px; }
+  .home-card p{ font-size:12.8px; color:var(--text-mid); line-height:1.85; }
+  .continue-btn{
+    margin-top:12px; display:inline-flex; align-items:center; gap:6px; background:linear-gradient(120deg,var(--violet),var(--cyan));
+    color:#080814; border:none; padding:10px 18px; border-radius:9px; font-family:var(--font-fa); font-weight:700; font-size:13px; cursor:pointer;
+  }
+  .stat-row{ display:flex; gap:10px; }
+  .stat-box{ flex:1; background:var(--elevated); border:1px solid var(--border-soft); border-radius:12px; padding:14px; text-align:center; }
+  .stat-box .n{ font-family:var(--font-mono); font-weight:700; font-size:20px; background:linear-gradient(120deg,var(--violet),var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .stat-box .l{ font-size:11px; color:var(--text-low); margin-top:4px; }
+
+  /* ---- account ---- */
+  .account-wrap{ display:flex; flex-direction:column; align-items:center; gap:16px; padding-top:6px; }
+  .ring-wrap{ position:relative; width:150px; height:150px; }
+  .ring-label{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .ring-label .pct{ font-family:var(--font-mono); font-size:24px; font-weight:700; color:var(--gold); }
+  .ring-label .sm{ font-size:10.5px; color:var(--text-low); margin-top:2px; }
+  .plan-badge{ display:inline-flex; align-items:center; gap:6px; background:var(--gold-soft); border:1px solid rgba(255,176,32,.35); color:var(--gold); padding:6px 14px; border-radius:20px; font-size:12.5px; font-weight:700; }
+  .feature-list{ width:100%; display:flex; flex-direction:column; gap:9px; }
+  .feature-list .fi{ display:flex; align-items:center; gap:8px; background:var(--elevated); border:1px solid var(--border-soft); border-radius:10px; padding:11px 13px; font-size:12.8px; color:var(--text-mid); }
+  .feature-list .fi .ck{ color:var(--gold); }
+  .manage-btn{
+    width:100%; background:var(--elevated); border:1px solid var(--border); color:var(--text-low); padding:12px; border-radius:10px;
+    font-family:var(--font-fa); font-size:13px; cursor:not-allowed; display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .manage-btn .tag{ font-family:var(--font-mono); font-size:10px; background:var(--border); padding:2px 7px; border-radius:10px; }
 
   ::-webkit-scrollbar{ width:8px; }
   ::-webkit-scrollbar-thumb{ background:var(--border); border-radius:4px; }
+
+  @media (max-width:640px){
+    body{ padding:0; align-items:stretch; }
+    .glow-frame{ max-width:100%; border-radius:0; padding:0; background:none; box-shadow:none; }
+    .app{ border-radius:0; min-height:100vh; min-height:100dvh; }
+  }
 </style>
 </head>
 <body>
-  <div class="glow-frame">
-  <div class="app">
-    <header class="topbar">
-      <div class="brand"><span class="brand-dot"></span>حل‌یار</div>
-      <div class="path" id="pathLabel">انتخاب پایه</div>
-      <div class="btns">
-        <span class="quota-pill" id="quotaPill" style="display:none;"></span>
-        <button id="backBtn" onclick="goBack()" disabled>بازگشت</button>
-      </div>
-    </header>
-    <div class="screen-area" id="screenArea"></div>
-  </div>
-  </div>
+  <div class="glow-frame"><div class="app" id="appRoot"></div></div>
 
 <script>
 const GRADES = [
@@ -203,84 +244,247 @@ const MAJORS = [
   {id:'علوم انسانی', label:'علوم انسانی', desc:'ادبیات، اقتصاد، جامعه‌شناسی'},
 ];
 
-let state = { grade:null, major:null, messages:[] };
-let attachedImage = null;
-let screenStack = ['grade'];
+const ICONS = {
+  home: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h4v-6h3v6h4a1 1 0 0 0 1-1v-9"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4V5Z"/></svg>',
+  account: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-4 4.2-6 7-6s5.8 2 7 6"/></svg>',
+  menu: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 1 12a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-12"/></svg>',
+  close: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
+};
 
-function goBack(){ if(screenStack.length<=1) return; screenStack.pop(); render(); }
-function goTo(screen){ screenStack.push(screen); render(); }
-
-function gradeLabel(){ return state.grade || ''; }
-function majorLabel(){ return state.major || ''; }
-
-async function refreshQuota(){
-  try{
-    const r = await fetch('/api/quota');
-    const d = await r.json();
-    const pill = document.getElementById('quotaPill');
-    pill.style.display = 'inline-block';
-    pill.textContent = `${d.remaining} سوال رایگان باقی‌مانده`;
-  }catch(e){ /* بی‌سروصدا رد شو، اگه بک‌اند بالا نیست */ }
+const LS_KEY = 'solyar_app_state_v1';
+function loadState(){
+  try{ const raw = localStorage.getItem(LS_KEY); if(raw) return JSON.parse(raw); }catch(e){}
+  return { grade:null, major:null, chats:[], activeChatId:null };
 }
+function saveState(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(appState)); }catch(e){} }
 
-function render(){
-  const screen = screenStack[screenStack.length-1];
-  document.getElementById('backBtn').disabled = screenStack.length<=1;
+let appState = loadState();
+let activeTab = 'chat';
+let attachedImage = null;
+let drawerOpen = false;
+let tempGrade = null;
+let changeFlowStep = null;
+let onboardStack = ['grade'];
+
+function isOnboarded(){ return !!(appState.grade && appState.major); }
+function newChat(grade, major){
+  const chat = { id:'c'+Date.now()+Math.random().toString(36).slice(2,7), grade, major, title:null, messages:[], updatedAt:Date.now() };
+  appState.chats.unshift(chat);
+  appState.activeChatId = chat.id;
+  saveState();
+  return chat;
+}
+function getActiveChat(){ return appState.chats.find(c=>c.id===appState.activeChatId); }
+function sortChats(){ appState.chats.sort((a,b)=>b.updatedAt-a.updatedAt); }
+function relativeTime(ts){
+  const d = new Date(ts), now = new Date();
+  const sameDay = d.toDateString()===now.toDateString();
+  if(sameDay) return 'امروز';
+  const yest = new Date(now); yest.setDate(now.getDate()-1);
+  if(d.toDateString()===yest.toDateString()) return 'دیروز';
+  try{ return d.toLocaleDateString('fa-IR', {month:'short', day:'numeric'}); }catch(e){ return ''; }
+}
+function escapeHtml(str){ const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
+
+/* ---------------- onboarding ---------------- */
+function renderOnboarding(){
+  document.getElementById('appRoot').innerHTML = `
+    <header class="topbar">
+      <div class="brand"><span class="brand-dot"></span>حل‌یار</div>
+      <div class="path" id="pathLabel"></div>
+      <div class="btns"><button id="backBtn" onclick="onboardBack()">بازگشت</button></div>
+    </header>
+    <div class="screen-area screen" id="screenArea" style="overflow-y:auto;"></div>`;
+  renderOnboardScreen();
+}
+function onboardBack(){ if(onboardStack.length<=1) return; onboardStack.pop(); renderOnboardScreen(); }
+function renderOnboardScreen(){
+  const screen = onboardStack[onboardStack.length-1];
+  document.getElementById('backBtn').disabled = onboardStack.length<=1;
   const area = document.getElementById('screenArea');
   const pathLabel = document.getElementById('pathLabel');
   area.classList.remove('screen'); void area.offsetWidth; area.classList.add('screen');
-
-  if(screen === 'grade'){
-    pathLabel.textContent = 'انتخاب پایه';
+  if(screen==='grade'){
+    pathLabel.textContent='انتخاب پایه';
     area.innerHTML = `
       <div class="screen-title">پایه‌ت رو انتخاب کن</div>
       <div class="screen-sub">هر پایه، کتاب‌ها و روش حل مخصوص خودش رو داره</div>
-      <div class="tab-grid">
-        ${GRADES.map(g => `
-          <div class="tab-card" onclick="selectGrade('${g.id}')">
-            <span class="num">${g.num}</span>
-            <span class="label">پایه ${g.label}</span>
-          </div>`).join('')}
-      </div>`;
-  } else if(screen === 'major'){
-    pathLabel.textContent = `پایه ${gradeLabel()} › انتخاب رشته`;
+      <div class="tab-grid">${GRADES.map(g=>`<div class="tab-card" onclick="onboardSelectGrade('${g.id}')"><span class="num">${g.num}</span><span class="label">پایه ${g.label}</span></div>`).join('')}</div>`;
+  } else if(screen==='major'){
+    pathLabel.textContent = `پایه ${tempGrade} › انتخاب رشته`;
     area.innerHTML = `
       <div class="screen-title">رشته‌ت چیه؟</div>
-      <div class="screen-sub">پایه ${gradeLabel()} — بر اساس رشته، دروس و روش حل فرق می‌کنه</div>
-      <div class="tab-grid">
-        ${MAJORS.map(m => `
-          <div class="tab-card" onclick="selectMajor('${m.id}')">
-            <span class="label">${m.label}</span>
-            <div class="desc">${m.desc}</div>
-          </div>`).join('')}
-      </div>`;
-  } else if(screen === 'chat'){
-    pathLabel.textContent = `پایه ${gradeLabel()} › ${majorLabel()}`;
-    area.innerHTML = `
-      <div class="screen-title" style="font-size:20px; margin-bottom:2px;">سوالت رو بپرس</div>
-      <div class="screen-sub" style="margin-bottom:16px;">می‌تونی متن بنویسی یا عکس سوال رو بفرستی</div>
-      <div class="chat-wrap" style="height:420px;">
-        <div id="errorSlot"></div>
-        <div class="messages" id="messages"></div>
-        <div id="attachSlot"></div>
-        <div class="composer">
-          <button class="icon-btn" title="آپلود عکس" onclick="document.getElementById('fileInput').click()">📎</button>
-          <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">
-          <textarea id="questionInput" placeholder="مثلاً: مشتق تابع f(x)=x^3-2x را بدست آورید" onkeydown="handleKey(event)"></textarea>
-          <button class="send" id="sendBtn" onclick="sendQuestion()">ارسال</button>
-        </div>
-      </div>`;
-    renderMessages();
-    renderAttachPreview();
-    refreshQuota();
+      <div class="screen-sub">پایه ${tempGrade} — بر اساس رشته، دروس و روش حل فرق می‌کنه</div>
+      <div class="tab-grid">${MAJORS.map(m=>`<div class="tab-card" onclick="onboardSelectMajor('${m.id}')"><span class="label">${m.label}</span><div class="desc">${m.desc}</div></div>`).join('')}</div>`;
+  }
+}
+function onboardSelectGrade(id){ tempGrade=id; onboardStack.push('major'); renderOnboardScreen(); }
+function onboardSelectMajor(id){
+  appState.grade=tempGrade; appState.major=id; saveState();
+  newChat(appState.grade, appState.major);
+  activeTab='chat';
+  renderMain();
+}
+
+/* ---------------- main shell ---------------- */
+function mainShellHTML(){
+  return `
+    <header class="topbar" id="topHeader"></header>
+    <div class="screen-area" id="screenArea"></div>
+    <nav class="bottomnav">
+      <button class="nav-btn ${activeTab==='account'?'active':''}" onclick="switchTab('account')">${ICONS.account}<span>اکانت</span></button>
+      <button class="nav-btn ${activeTab==='chat'?'active':''}" onclick="switchTab('chat')">${ICONS.chat}<span>چت</span></button>
+      <button class="nav-btn ${activeTab==='home'?'active':''}" onclick="switchTab('home')">${ICONS.home}<span>خانه</span></button>
+    </nav>
+    <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+    <div class="drawer-panel" id="drawerPanel">
+      <div class="drawer-head"><span>گفتگوها</span><button class="icon-btn small" onclick="closeDrawer()">${ICONS.close}</button></div>
+      <button class="new-chat-btn" onclick="startNewChatFromDrawer()">${ICONS.plus} چت جدید</button>
+      <div class="drawer-list" id="drawerList"></div>
+    </div>`;
+}
+function renderMain(){
+  document.getElementById('appRoot').innerHTML = mainShellHTML();
+  renderHeader();
+  renderScreen();
+}
+function switchTab(tab){ activeTab=tab; renderMain(); }
+
+function renderHeader(){
+  const wrap = document.getElementById('topHeader');
+  if(activeTab==='chat'){
+    const chat = getActiveChat();
+    wrap.innerHTML = `
+      <button class="icon-btn small" onclick="openDrawer()">${ICONS.menu}</button>
+      <div class="path">${chat ? chat.grade+' › '+chat.major : ''}</div>
+      <div class="btns"><span class="quota-pill" id="quotaPill" style="display:none;"></span></div>`;
+  } else {
+    wrap.innerHTML = `
+      <div class="brand"><span class="brand-dot"></span>حل‌یار</div>
+      <div class="path">${activeTab==='home' ? 'خانه' : 'حساب من'}</div>
+      <div class="btns"></div>`;
   }
 }
 
-function selectGrade(id){ state.grade = id; goTo('major'); }
-function selectMajor(id){ state.major = id; state.messages = []; attachedImage = null; goTo('chat'); }
+function renderScreen(){
+  const area = document.getElementById('screenArea');
+  area.classList.remove('screen'); void area.offsetWidth; area.classList.add('screen');
+  if(activeTab==='home'){ area.style.overflowY='auto'; area.style.display='block'; renderHomeScreen(); }
+  else if(activeTab==='chat'){ area.style.overflowY='hidden'; area.style.display='flex'; area.style.flexDirection='column'; renderChatScreen(); }
+  else if(activeTab==='account'){ area.style.overflowY='auto'; area.style.display='block'; renderAccountScreen(); }
+}
 
+/* ---------------- drawer ---------------- */
+function drawerListHTML(){
+  if(!appState.chats.length) return `<div class="empty-hint" style="padding:30px 8px;"><span class="glyph">💬</span>هنوز گفتگویی نساختی</div>`;
+  return appState.chats.map(c=>`
+    <div class="chat-item ${c.id===appState.activeChatId?'active':''}" onclick="openChat('${c.id}')">
+      <div class="meta">
+        <div class="title">${escapeHtml(c.title || 'گفتگوی جدید')}</div>
+        <div class="sub">${c.grade} · ${c.major} · ${relativeTime(c.updatedAt)}</div>
+      </div>
+      <button class="del" onclick="event.stopPropagation(); deleteChat('${c.id}')">${ICONS.trash}</button>
+    </div>`).join('');
+}
+function openDrawer(){
+  drawerOpen=true;
+  document.getElementById('drawerList').innerHTML = drawerListHTML();
+  document.getElementById('drawerBackdrop').classList.add('open');
+  document.getElementById('drawerPanel').classList.add('open');
+}
+function closeDrawer(){
+  drawerOpen=false;
+  const b=document.getElementById('drawerBackdrop'), p=document.getElementById('drawerPanel');
+  if(b) b.classList.remove('open');
+  if(p) p.classList.remove('open');
+}
+function openChat(id){ appState.activeChatId=id; saveState(); activeTab='chat'; renderMain(); }
+function startNewChatFromDrawer(){ startNewChat(); }
+function startNewChat(){ sortChats(); newChat(appState.grade, appState.major); activeTab='chat'; renderMain(); }
+function deleteChat(id){
+  if(!confirm('این گفتگو حذف بشه؟')) return;
+  appState.chats = appState.chats.filter(c=>c.id!==id);
+  if(appState.activeChatId===id){ appState.activeChatId = appState.chats[0] ? appState.chats[0].id : null; }
+  if(!appState.chats.length){ newChat(appState.grade, appState.major); }
+  saveState();
+  renderMain();
+}
+
+/* ---------------- home ---------------- */
+function startChangeFlow(){ changeFlowStep='grade'; renderHomeScreen(); }
+function cancelChangeFlow(){ changeFlowStep=null; renderHomeScreen(); }
+function pickChangeGrade(id){ tempGrade=id; changeFlowStep='major'; renderHomeScreen(); }
+function pickChangeMajor(id){ appState.grade=tempGrade; appState.major=id; saveState(); changeFlowStep=null; renderHomeScreen(); }
+
+function changeFlowHTML(){
+  if(changeFlowStep==='grade'){
+    return `
+      <div class="screen-title" style="font-size:20px;">پایه‌ت رو انتخاب کن</div>
+      <div class="screen-sub">این برای گفتگوهای جدید استفاده می‌شه؛ گفتگوهای قبلی تغییر نمی‌کنن</div>
+      <div class="tab-grid">${GRADES.map(g=>`<div class="tab-card" onclick="pickChangeGrade('${g.id}')"><span class="num">${g.num}</span><span class="label">پایه ${g.label}</span></div>`).join('')}</div>
+      <button class="link-btn" style="margin-top:16px;" onclick="cancelChangeFlow()">انصراف</button>`;
+  }
+  return `
+    <div class="screen-title" style="font-size:20px;">رشته‌ت چیه؟</div>
+    <div class="screen-sub">پایه ${tempGrade}</div>
+    <div class="tab-grid">${MAJORS.map(m=>`<div class="tab-card" onclick="pickChangeMajor('${m.id}')"><span class="label">${m.label}</span><div class="desc">${m.desc}</div></div>`).join('')}</div>
+    <button class="link-btn" style="margin-top:16px;" onclick="cancelChangeFlow()">انصراف</button>`;
+}
+
+function renderHomeScreen(){
+  const area = document.getElementById('screenArea');
+  if(changeFlowStep){ area.innerHTML = changeFlowHTML(); return; }
+  sortChats();
+  const last = appState.chats.find(c=>c.messages && c.messages.length);
+  area.innerHTML = `
+    <div class="home-wrap">
+      <div>
+        <div class="hello">سلام 👋</div>
+        <span class="path-chip">پایه ${appState.grade} · ${appState.major}</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="n">${appState.chats.length}</div><div class="l">گفتگو</div></div>
+        <div class="stat-box"><div class="n" id="quotaHomeNum">—</div><div class="l">سوال رایگان باقی‌مانده</div></div>
+      </div>
+      ${last ? `
+      <div class="home-card">
+        <h3>ادامه‌ی آخرین گفتگو</h3>
+        <p>${escapeHtml(last.title || 'گفتگوی جدید')}</p>
+        <button class="continue-btn" onclick="openChat('${last.id}')">${ICONS.chat} ادامه بده</button>
+      </div>` : ''}
+      <div class="home-card">
+        <h3>حل‌یار چیه؟</h3>
+        <p>دستیار هوش‌مصنوعی کنکوره که دقیقاً با روش و ترتیب کتاب درسی خودت، قدم‌به‌قدم سوالاتتو حل می‌کنه — نه با روش‌های دانشگاهی یا خارج از چارچوب کنکور. متن سوال رو بنویس یا عکسشو بفرست.</p>
+      </div>
+      <button class="continue-btn" onclick="startNewChat()">${ICONS.plus} گفتگوی جدید</button>
+      <button class="link-btn" onclick="startChangeFlow()">تغییر پایه یا رشته</button>
+    </div>`;
+  refreshQuota();
+}
+
+/* ---------------- chat ---------------- */
+function renderChatScreen(){
+  const area = document.getElementById('screenArea');
+  area.innerHTML = `
+    <div class="chat-wrap">
+      <div id="errorSlot"></div>
+      <div class="messages" id="messages"></div>
+      <div id="attachSlot"></div>
+      <div class="composer">
+        <button class="icon-btn" title="آپلود عکس" onclick="document.getElementById('fileInput').click()">📎</button>
+        <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">
+        <textarea id="questionInput" placeholder="مثلاً: مشتق تابع f(x)=x^3-2x را بدست آورید" onkeydown="handleKey(event)"></textarea>
+        <button class="send" id="sendBtn" onclick="sendQuestion()">ارسال</button>
+      </div>
+    </div>`;
+  renderMessages();
+  renderAttachPreview();
+  refreshQuota();
+}
 function handleKey(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendQuestion(); } }
-
 function handleFile(e){
   const file = e.target.files[0];
   if(!file) return;
@@ -294,22 +498,30 @@ function handleFile(e){
   };
   reader.readAsDataURL(file);
 }
-function removeAttachment(){ attachedImage=null; document.getElementById('fileInput').value=''; renderAttachPreview(); }
+function removeAttachment(){ attachedImage=null; const fi=document.getElementById('fileInput'); if(fi) fi.value=''; renderAttachPreview(); }
 function renderAttachPreview(){
   const slot = document.getElementById('attachSlot');
   if(!slot) return;
   if(!attachedImage){ slot.innerHTML=''; return; }
   slot.innerHTML = `<div class="attach-preview"><img src="${attachedImage.previewUrl}"><span>عکس ضمیمه شد</span><button onclick="removeAttachment()">حذف</button></div>`;
 }
-
+function formatAssistantText(raw){
+  let text = escapeHtml(raw||'');
+  text = text.replace(/^---$/gm, '<hr>');
+  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/^\*\s+/gm, '• ');
+  return text;
+}
 function renderMessages(){
   const box = document.getElementById('messages');
   if(!box) return;
-  if(state.messages.length === 0){
+  const chat = getActiveChat();
+  const msgs = chat ? chat.messages : [];
+  if(msgs.length === 0){
     box.innerHTML = `<div class="empty-hint"><span class="glyph">✏️</span>هنوز سوالی نپرسیدی — شروع کن!</div>`;
     return;
   }
-  box.innerHTML = state.messages.map(m => {
+  box.innerHTML = msgs.map(m => {
     if(m.role==='user'){
       return `<div class="msg user">${escapeHtml(m.text||'')}${m.imagePreview?`<img src="${m.imagePreview}">`:''}</div>`;
     } else if(m.role==='assistant'){
@@ -319,7 +531,6 @@ function renderMessages(){
     }
   }).join('');
   box.scrollTop = box.scrollHeight;
-
   if(window.renderMathInElement){
     box.querySelectorAll('.msg.ai .content').forEach(el=>{
       try{
@@ -336,17 +547,9 @@ function renderMessages(){
     });
   }
 }
-
-function escapeHtml(str){ const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
-function formatAssistantText(raw){
-  let text = escapeHtml(raw||'');
-  text = text.replace(/^---$/gm, '<hr>');
-  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  text = text.replace(/^\*\s+/gm, '• ');
-  return text;
-}
-
 async function sendQuestion(){
+  const chat = getActiveChat();
+  if(!chat) return;
   const input = document.getElementById('questionInput');
   const text = input.value.trim();
   if(!text && !attachedImage) return;
@@ -354,47 +557,103 @@ async function sendQuestion(){
   document.getElementById('errorSlot').innerHTML = '';
   const userMsg = { role:'user', text, imagePreview: attachedImage ? attachedImage.previewUrl : null };
   const imageForRequest = attachedImage;
-  state.messages.push(userMsg);
-  state.messages.push({role:'loading'});
+  chat.messages.push(userMsg);
+  if(!chat.title){ chat.title = text ? text.slice(0,42) : 'سوال با عکس'; }
+  chat.messages.push({role:'loading'});
+  chat.updatedAt = Date.now();
   input.value=''; attachedImage=null;
   document.getElementById('sendBtn').disabled = true;
+  saveState();
   renderMessages(); renderAttachPreview();
 
   try{
     const payload = {
-      grade: state.grade,
-      major: state.major,
-      messages: state.messages
+      grade: chat.grade,
+      major: chat.major,
+      messages: chat.messages
         .filter(m=>m.role==='user'||m.role==='assistant')
         .map(m=>({role:m.role, text:m.text})),
       image: imageForRequest ? { mime: imageForRequest.mime, base64: imageForRequest.base64 } : null
     };
-
     const r = await fetch('/api/chat', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
     });
     const data = await r.json();
-    state.messages.pop();
-
+    chat.messages.pop();
     if(!r.ok){ throw new Error(data.error || 'خطای نامشخص'); }
-
-    state.messages.push({role:'assistant', text: data.text});
+    chat.messages.push({role:'assistant', text: data.text});
+    chat.updatedAt = Date.now();
+    saveState();
     if(typeof data.remainingToday === 'number'){
       const pill = document.getElementById('quotaPill');
-      pill.style.display='inline-block';
-      pill.textContent = `${data.remainingToday} سوال رایگان باقی‌مانده`;
+      if(pill){ pill.style.display='inline-block'; pill.textContent = `${data.remainingToday} سوال رایگان باقی‌مانده`; }
     }
   }catch(err){
-    state.messages.pop();
+    chat.messages.pop();
+    saveState();
     document.getElementById('errorSlot').innerHTML = `<div class="error-box">خطا: ${escapeHtml(err.message)}</div>`;
   }
   document.getElementById('sendBtn').disabled = false;
   renderMessages();
 }
 
-render();
+/* ---------------- account ---------------- */
+function renderAccountScreen(){
+  const area = document.getElementById('screenArea');
+  area.innerHTML = `
+    <div class="account-wrap">
+      <div class="ring-wrap">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#7C5CFF"/><stop offset="100%" stop-color="#25E0CC"/>
+          </linearGradient></defs>
+          <circle cx="75" cy="75" r="64" fill="none" stroke="#1E2140" stroke-width="11"/>
+          <circle cx="75" cy="75" r="64" fill="none" stroke="url(#ringGrad)" stroke-width="11" stroke-linecap="round"
+            stroke-dasharray="402" stroke-dashoffset="0" style="transform:rotate(-90deg); transform-origin:75px 75px;"/>
+        </svg>
+        <div class="ring-label"><div class="pct">۱۰۰٪</div><div class="sm">فعال</div></div>
+      </div>
+      <span class="plan-badge">⚡ پلن پرمیوم</span>
+      <div class="stat-row" style="width:100%;">
+        <div class="stat-box"><div class="n" id="quotaAccNum">—</div><div class="l">سهمیه‌ی امروز</div></div>
+        <div class="stat-box"><div class="n">${appState.chats.length}</div><div class="l">گفتگو</div></div>
+      </div>
+      <div class="feature-list">
+        <div class="fi"><span class="ck">✔</span>سوال نامحدود روزانه</div>
+        <div class="fi"><span class="ck">✔</span>آپلود عکس بدون محدودیت</div>
+        <div class="fi"><span class="ck">✔</span>اولویت پاسخ‌دهی هوش‌مصنوعی</div>
+      </div>
+      <button class="manage-btn" disabled>مدیریت اشتراک <span class="tag">به‌زودی</span></button>
+      <p style="font-size:11px; color:var(--text-low); text-align:center; line-height:1.7;">نسخه‌ی نمایشیه — پرداخت و مدیریت اشتراک واقعی هنوز وصل نشده</p>
+      <p style="font-size:10.5px; color:var(--text-low); text-align:center; opacity:0.65;">حل‌یار · سازنده: یونس بابادی</p>
+    </div>`;
+  refreshQuota();
+}
+
+/* ---------------- quota ---------------- */
+async function refreshQuota(){
+  try{
+    const r = await fetch('/api/quota');
+    const d = await r.json();
+    const pill = document.getElementById('quotaPill');
+    if(pill){ pill.style.display = 'inline-block'; pill.textContent = `${d.remaining} سوال رایگان باقی‌مانده`; }
+    const homeNum = document.getElementById('quotaHomeNum');
+    if(homeNum){ homeNum.textContent = d.remaining; }
+    const accNum = document.getElementById('quotaAccNum');
+    if(accNum){ accNum.textContent = `${d.used}/${d.limit}`; }
+  }catch(e){ /* بی‌سروصدا رد شو، اگه بک‌اند بالا نیست */ }
+}
+
+/* ---------------- init ---------------- */
+function init(){
+  if(!isOnboarded()){ onboardStack=['grade']; renderOnboarding(); }
+  else {
+    sortChats();
+    if(!getActiveChat()){ if(appState.chats.length) appState.activeChatId=appState.chats[0].id; else newChat(appState.grade, appState.major); }
+    renderMain();
+  }
+}
+init();
 </script>
 </body>
 </html>
