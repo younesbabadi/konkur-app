@@ -3,439 +3,382 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>دستیار درسی کنکور</title>
+<title>حل‌یار — دستیار هوش مصنوعی کنکور</title>
+<meta name="description" content="پایه و رشته‌ت رو انتخاب کن، سوالتو بنویس یا عکسشو بفرست؛ حل‌یار دقیقاً با روش کتاب درسی خودت قدم‌به‌قدم حلش می‌کنه.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Lalezar&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <style>
   :root{
-    --ink:#1B2A4A;
-    --ink-soft:#3A4A6B;
-    --paper:#EDEAE0;
-    --paper-light:#F6F4EE;
-    --rule:#B7C2D6;
-    --accent:#A63636;
-    --gold:#C9A227;
-    --teal:#3B6E71;
-    --shadow: 0 10px 30px rgba(27,42,74,0.18);
+    --void:#07070E;
+    --deep:#0C0E19;
+    --panel:#12142A;
+    --elevated:#191C36;
+    --border:#282B4C;
+    --border-soft:#1E2140;
+    --text-hi:#F4F2FF;
+    --text-mid:#A9A6C9;
+    --text-low:#68668A;
+    --violet:#7C5CFF;
+    --violet-soft:rgba(124,92,255,0.14);
+    --cyan:#25E0CC;
+    --cyan-soft:rgba(37,224,204,0.12);
+    --gold:#FFB020;
+    --gold-soft:rgba(255,176,32,0.14);
+    --font-fa:'Vazirmatn', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{ scroll-behavior:smooth; }
   body{
-    font-family:'Vazirmatn', sans-serif;
-    background: var(--ink);
+    font-family:var(--font-fa);
+    background:var(--void);
+    color:var(--text-hi);
+    overflow-x:hidden;
+    position:relative;
+  }
+  body::before{
+    content:'';
+    position:fixed; inset:0; z-index:0; pointer-events:none;
     background-image:
-      radial-gradient(circle at 15% 20%, rgba(201,162,39,0.08), transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(59,110,113,0.10), transparent 40%);
-    background-size: 200% 200%;
-    animation: bgDrift 18s ease-in-out infinite;
-    min-height:100vh;
-    color:var(--ink);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
+      linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:0.35;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 70%);
   }
-  @keyframes bgDrift{
-    0%{ background-position: 0% 0%; }
-    50%{ background-position: 100% 100%; }
-    100%{ background-position: 0% 0%; }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; } }
+
+  .wrap{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 24px; }
+
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(7,7,14,0.72); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border-soft);
   }
-  @media (prefers-reduced-motion: reduce){
-    body{ animation:none; }
-    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:66px; }
+  .brand{ display:flex; align-items:center; gap:9px; font-weight:800; font-size:19px; }
+  .brand .dot{ width:9px; height:9px; border-radius:50%; background:linear-gradient(135deg, var(--violet), var(--cyan)); box-shadow:0 0 12px var(--violet); }
+  nav .cta-mini{
+    background:linear-gradient(120deg, var(--violet), var(--cyan));
+    color:#080814; font-weight:700; font-size:13.5px; padding:9px 20px;
+    border-radius:8px; text-decoration:none; transition:transform .15s, box-shadow .15s;
+  }
+  nav .cta-mini:hover{ transform:translateY(-1px); box-shadow:0 8px 22px rgba(124,92,255,0.35); }
+
+  /* ---------- glow border utility ---------- */
+  .glow-frame{
+    position:relative; border-radius:20px; padding:1.5px;
+    background:linear-gradient(120deg, var(--violet), var(--cyan), var(--violet));
+    background-size:240% 240%;
+    animation: gradientMove 7s ease infinite;
+  }
+  @keyframes gradientMove{ 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
+  .glow-frame > .glow-inner{ border-radius:18.5px; background:var(--panel); height:100%; }
+
+  /* ---------- hero ---------- */
+  .hero{ padding:76px 0 40px; }
+  .hero-grid{ display:grid; grid-template-columns:1.05fr 0.95fr; gap:52px; align-items:center; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:12px;
+    color:var(--cyan); background:var(--cyan-soft); border:1px solid rgba(37,224,204,0.3);
+    padding:6px 12px; border-radius:20px; margin-bottom:20px; letter-spacing:0.3px;
+  }
+  h1{
+    font-size:44px; font-weight:900; line-height:1.28; letter-spacing:-0.5px;
+    margin-bottom:20px;
+  }
+  h1 .grad{
+    background:linear-gradient(120deg, var(--violet), var(--cyan));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p.sub{ font-size:16.5px; line-height:1.9; color:var(--text-mid); max-width:520px; margin-bottom:32px; }
+  .hero-ctas{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:36px; }
+  .btn-primary{
+    background:linear-gradient(120deg, var(--violet), var(--cyan)); color:#080814; font-weight:800;
+    font-size:15px; padding:14px 30px; border-radius:11px; text-decoration:none; display:inline-flex;
+    align-items:center; gap:8px; transition:transform .15s, box-shadow .15s; border:none; cursor:pointer;
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 32px rgba(124,92,255,0.4); }
+  .btn-ghost{
+    background:transparent; color:var(--text-hi); font-weight:600; font-size:15px; padding:14px 26px;
+    border-radius:11px; border:1.5px solid var(--border); text-decoration:none; transition:border-color .15s, background .15s;
+  }
+  .btn-ghost:hover{ border-color:var(--violet); background:var(--violet-soft); }
+  .chip-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .chip{
+    font-family:var(--font-mono); font-size:12px; color:var(--text-mid); background:var(--elevated);
+    border:1px solid var(--border-soft); padding:6px 13px; border-radius:20px;
   }
 
-  .app{
-    width:100%;
-    max-width:760px;
-    min-height:660px;
-    background:var(--paper-light);
-    border-radius:8px;
-    box-shadow:var(--shadow);
-    position:relative;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    animation: appIn 0.5s cubic-bezier(.2,.8,.2,1);
+  /* ---------- demo panel (signature) ---------- */
+  .demo-panel{ min-height:420px; padding:22px; display:flex; flex-direction:column; }
+  .demo-topbar{ display:flex; align-items:center; gap:7px; margin-bottom:18px; }
+  .demo-topbar span.tdot{ width:8px; height:8px; border-radius:50%; background:var(--border); }
+  .demo-topbar .tlabel{ font-family:var(--font-mono); font-size:11px; color:var(--text-low); margin-right:auto; }
+  .demo-q{
+    align-self:flex-start; background:var(--elevated); border:1px solid var(--border-soft);
+    color:var(--text-hi); font-size:13.5px; line-height:1.9; padding:10px 14px; border-radius:10px 10px 10px 2px;
+    max-width:88%; margin-bottom:16px; opacity:0; animation: revealUp .5s ease forwards; animation-delay:.2s;
   }
-  @keyframes appIn{
-    from{ opacity:0; transform:translateY(14px) scale(0.985); }
-    to{ opacity:1; transform:translateY(0) scale(1); }
+  .demo-step{
+    display:flex; gap:10px; margin-bottom:14px; opacity:0; animation: revealUp .5s ease forwards;
+    font-size:13.5px; line-height:2.1;
   }
+  .demo-step:nth-child(3){ animation-delay:1.0s; }
+  .demo-step:nth-child(4){ animation-delay:1.9s; }
+  .demo-step:nth-child(5){ animation-delay:2.8s; }
+  .demo-step .tick{ color:var(--gold); flex-shrink:0; margin-top:2px; }
+  .demo-step .txt{ color:var(--text-mid); }
+  .demo-step .txt strong{ color:var(--text-hi); font-weight:700; }
+  .demo-step .katex{ color:var(--cyan); font-size:1.05em; }
+  @keyframes revealUp{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
+  .demo-badge{
+    margin-top:auto; padding-top:14px; border-top:1px dashed var(--border-soft);
+    display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11.5px; color:var(--text-low);
+  }
+  .demo-badge .lp{ width:6px; height:6px; border-radius:50%; background:var(--gold); box-shadow:0 0 8px var(--gold); animation:pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
-  .ruled{
-    background-image: repeating-linear-gradient(
-      to bottom, transparent 0px, transparent 35px, var(--rule) 36px
-    );
-    position:relative;
-  }
-  .ruled::before{
-    content:''; position:absolute; top:0; bottom:0; right:56px; width:2px;
-    background: var(--accent); opacity:0.5;
-  }
-  .app > .ruled{ flex:1; padding:28px 84px 28px 28px; overflow-y:auto; }
+  /* ---------- stats strip ---------- */
+  .stats{ border-top:1px solid var(--border-soft); border-bottom:1px solid var(--border-soft); padding:26px 0; margin-top:40px; }
+  .stats .wrap{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px; }
+  .stat{ text-align:center; flex:1; min-width:120px; }
+  .stat .num{ font-family:var(--font-mono); font-size:26px; font-weight:700; background:linear-gradient(120deg, var(--violet), var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .stat .lbl{ font-size:12.5px; color:var(--text-low); margin-top:4px; }
 
-  header.topbar{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 24px; background:var(--ink); color:var(--paper-light);
-    position:relative; z-index:2;
-  }
-  header.topbar .brand{
-    font-family:'Lalezar', sans-serif; font-size:22px; letter-spacing:0.5px; color:var(--gold);
-    display:flex; align-items:center; gap:8px;
-  }
-  .pencil-dot{
-    width:8px; height:8px; border-radius:50%; background:var(--accent);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.4; transform:scale(1.4);} }
-  header.topbar .path{ font-size:13px; color:var(--paper); opacity:0.85; transition:opacity 0.2s; }
-  header.topbar .btns{ display:flex; gap:8px; align-items:center; }
-  header.topbar button{
-    background:none; border:1px solid rgba(246,244,238,0.35); color:var(--paper-light);
-    padding:6px 14px; border-radius:5px; cursor:pointer; font-family:'Vazirmatn'; font-size:13px;
-    transition: background 0.15s, transform 0.15s;
-  }
-  header.topbar button:hover{ background: rgba(246,244,238,0.14); transform:translateY(-1px); }
-  header.topbar button:disabled{ opacity:0.3; cursor:default; transform:none; }
-  .quota-pill{
-    font-size:11.5px; background:rgba(201,162,39,0.18); color:var(--gold);
-    border:1px solid rgba(201,162,39,0.4); padding:3px 10px; border-radius:20px;
-  }
+  /* ---------- section shared ---------- */
+  section{ padding:88px 0; }
+  .section-head{ text-align:center; max-width:600px; margin:0 auto 52px; }
+  .section-head .eyebrow{ margin-bottom:14px; }
+  .section-head h2{ font-size:32px; font-weight:800; margin-bottom:12px; letter-spacing:-0.3px; }
+  .section-head p{ color:var(--text-mid); font-size:15px; line-height:1.8; }
 
-  .screen{ animation: screenIn 0.35s cubic-bezier(.2,.8,.2,1); }
-  @keyframes screenIn{
-    from{ opacity:0; transform:translateX(8px); }
-    to{ opacity:1; transform:translateX(0); }
+  /* ---------- steps ---------- */
+  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; position:relative; }
+  .step-card{
+    background:var(--panel); border:1px solid var(--border-soft); border-radius:16px; padding:28px 22px;
+    position:relative; transition:border-color .2s, transform .2s;
   }
-  .screen-title{ font-family:'Lalezar', sans-serif; font-size:28px; color:var(--ink); margin-bottom:6px; }
-  .screen-sub{ font-size:14px; color:var(--ink-soft); margin-bottom:24px; }
+  .step-card:hover{ border-color:var(--violet); transform:translateY(-4px); }
+  .step-card .idx{ font-family:var(--font-mono); font-size:13px; color:var(--cyan); margin-bottom:16px; display:block; }
+  .step-card h3{ font-size:17px; font-weight:700; margin-bottom:10px; }
+  .step-card p{ font-size:13.5px; color:var(--text-mid); line-height:1.85; }
 
-  .tab-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
-  .tab-card{
-    background:var(--paper-light); border:1.5px solid var(--rule); border-radius:6px;
-    padding:20px 12px; text-align:center; cursor:pointer; position:relative;
-    transition: transform 0.15s cubic-bezier(.2,.8,.2,1), border-color 0.15s, box-shadow 0.15s;
-    animation: cardIn 0.4s cubic-bezier(.2,.8,.2,1) both;
+  /* ---------- features ---------- */
+  .features{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .feat-card{
+    background:var(--elevated); border:1px solid var(--border-soft); border-radius:16px; padding:26px 20px;
+    transition:transform .2s, box-shadow .2s, border-color .2s;
   }
-  .tab-grid .tab-card:nth-child(1){ animation-delay:0.02s; }
-  .tab-grid .tab-card:nth-child(2){ animation-delay:0.08s; }
-  .tab-grid .tab-card:nth-child(3){ animation-delay:0.14s; }
-  @keyframes cardIn{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
-  .tab-card:hover{ transform:translateY(-4px); border-color:var(--gold); box-shadow:0 8px 20px rgba(201,162,39,0.28); }
-  .tab-card:active{ transform:translateY(-1px) scale(0.98); }
-  .tab-card .num{ font-family:'Lalezar'; font-size:32px; color:var(--teal); display:block; margin-bottom:6px; }
-  .tab-card .label{ font-size:14px; font-weight:600; color:var(--ink); }
-  .tab-card .desc{ font-size:11.5px; color:var(--ink-soft); margin-top:4px; }
+  .feat-card:hover{ transform:translateY(-4px); border-color:var(--cyan); box-shadow:0 16px 34px rgba(37,224,204,0.12); }
+  .feat-card .ic{ font-size:24px; margin-bottom:14px; display:block; }
+  .feat-card h3{ font-size:15px; font-weight:700; margin-bottom:8px; }
+  .feat-card p{ font-size:12.8px; color:var(--text-mid); line-height:1.8; }
 
-  .chat-wrap{ display:flex; flex-direction:column; height:100%; }
-  .messages{ flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:16px; padding-bottom:12px; }
-  .msg{ max-width:88%; animation: msgIn 0.3s cubic-bezier(.2,.8,.2,1); }
-  @keyframes msgIn{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
-  .msg.user{
-    align-self:flex-start; background:var(--ink); color:var(--paper-light);
-    padding:10px 14px; border-radius:10px 10px 10px 2px; font-size:14px; line-height:1.9;
+  /* ---------- path preview ---------- */
+  .path-preview{
+    display:flex; justify-content:center; align-items:center; gap:14px; flex-wrap:wrap;
   }
-  .msg.user img{ max-width:220px; border-radius:6px; display:block; margin-top:8px; }
-  .msg.ai{ align-self:flex-end; padding:4px 4px 4px 0; font-size:14.5px; line-height:2.1; color:var(--ink); }
-  .msg.ai .tick{ color:var(--accent); font-weight:700; margin-left:4px; }
-  .msg.ai .content{ white-space:pre-wrap; }
-  .msg.ai .content strong{ color:var(--teal); font-weight:700; }
-  .msg.ai .content .katex{ font-size:1.05em; }
-  .msg.ai .content hr{ border:none; border-top:1px dashed var(--rule); margin:10px 0; }
+  .path-col{ display:flex; flex-direction:column; gap:10px; }
+  .path-pill{
+    font-family:var(--font-mono); font-size:13px; text-align:center; padding:11px 18px; border-radius:10px;
+    background:var(--panel); border:1px solid var(--border-soft); color:var(--text-mid);
+  }
+  .path-x{ color:var(--text-low); font-size:18px; }
 
-  .typing{ align-self:flex-end; display:flex; gap:4px; padding:6px 4px; }
-  .typing span{
-    width:6px; height:6px; border-radius:50%; background:var(--teal); opacity:0.6;
-    animation: bounce 1.2s infinite ease-in-out;
-  }
-  .typing span:nth-child(2){ animation-delay:0.15s; }
-  .typing span:nth-child(3){ animation-delay:0.3s; }
-  @keyframes bounce{ 0%,60%,100%{ transform:translateY(0); opacity:0.5;} 30%{ transform:translateY(-5px); opacity:1;} }
+  /* ---------- final cta ---------- */
+  .cta-band{ text-align:center; padding:2px; border-radius:24px; }
+  .cta-band .inner{ border-radius:22.5px; padding:62px 30px; text-align:center; }
+  .cta-band h2{ font-size:30px; font-weight:800; margin-bottom:14px; }
+  .cta-band p{ color:var(--text-mid); font-size:15px; margin-bottom:28px; }
 
-  .attach-preview{
-    display:flex; align-items:center; gap:10px; background:var(--paper);
-    border:1px dashed var(--rule); border-radius:6px; padding:8px 10px; margin-bottom:8px;
-    font-size:12.5px; color:var(--ink-soft); animation: cardIn 0.25s ease both;
-  }
-  .attach-preview img{ width:44px; height:44px; object-fit:cover; border-radius:4px; }
-  .attach-preview button{ margin-right:auto; background:none; border:none; color:var(--accent); cursor:pointer; font-size:12.5px; font-family:'Vazirmatn'; }
+  footer{ padding:40px 0 60px; text-align:center; }
+  footer .brand{ justify-content:center; margin-bottom:8px; }
+  footer p{ font-size:12.5px; color:var(--text-low); }
 
-  .composer{ display:flex; gap:8px; padding-top:12px; border-top:1px dashed var(--rule); align-items:flex-end; }
-  .composer textarea{
-    flex:1; resize:none; font-family:'Vazirmatn'; font-size:14px; border:1.5px solid var(--rule);
-    border-radius:8px; padding:10px 12px; background:var(--paper-light); color:var(--ink);
-    min-height:44px; max-height:120px; transition:border-color 0.15s, box-shadow 0.15s;
+  @media (max-width:860px){
+    .hero-grid{ grid-template-columns:1fr; }
+    h1{ font-size:32px; }
+    .steps, .features{ grid-template-columns:1fr; }
+    .stats .wrap{ justify-content:center; }
   }
-  .composer textarea:focus{ outline:none; border-color:var(--teal); box-shadow:0 0 0 3px rgba(59,110,113,0.12); }
-  .icon-btn{
-    background:var(--paper-light); border:1.5px solid var(--rule); color:var(--ink); border-radius:8px;
-    width:44px; height:44px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-    transition:border-color 0.15s, transform 0.15s;
-  }
-  .icon-btn:hover{ border-color:var(--gold); transform:translateY(-1px); }
-  .composer button.send{
-    background:var(--accent); color:#fff; border:none; border-radius:8px; padding:0 20px; height:44px;
-    font-family:'Vazirmatn'; font-weight:600; font-size:14px; cursor:pointer;
-    transition:background 0.15s, transform 0.15s; position:relative; overflow:hidden;
-  }
-  .composer button.send:hover:not(:disabled){ background:#8f2c2c; transform:translateY(-1px); }
-  .composer button.send:active:not(:disabled){ transform:translateY(0); }
-  .composer button.send:disabled{ background:#bbb; cursor:default; }
-
-  .error-box{
-    background:#F9E4E4; border:1px solid var(--accent); color:var(--accent); font-size:13px;
-    padding:8px 12px; border-radius:6px; margin-bottom:10px; animation: cardIn 0.25s ease both;
-  }
-  .empty-hint{
-    text-align:center; color:var(--ink-soft); font-size:13px; padding:40px 12px;
-    display:flex; flex-direction:column; align-items:center; gap:8px;
-  }
-  .empty-hint .glyph{ font-size:34px; }
-
-  .credit-footer{
-    text-align:center;
-    padding:8px 12px 10px;
-    font-size:11px;
-    color:var(--ink-soft);
-    background:var(--paper);
-    border-top:1px dashed var(--rule);
-    letter-spacing:0.3px;
-  }
-  .credit-footer .name{
-    font-family:'Lalezar', sans-serif;
-    font-size:14px;
-    color:var(--gold);
-    letter-spacing:0.5px;
-    margin-right:4px;
-  }
-  .credit-footer .quill{ opacity:0.6; margin-left:4px; }
-
-  ::-webkit-scrollbar{ width:8px; }
-  ::-webkit-scrollbar-thumb{ background:var(--rule); border-radius:4px; }
 </style>
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <div class="brand"><span class="pencil-dot"></span>دستیار درسی کنکور</div>
-      <div class="path" id="pathLabel">انتخاب پایه</div>
-      <div class="btns">
-        <span class="quota-pill" id="quotaPill" style="display:none;"></span>
-        <button id="backBtn" onclick="goBack()" disabled>بازگشت</button>
-      </div>
-    </header>
-    <div class="ruled" id="screenArea"></div>
-    <div class="credit-footer">✎ سازنده: <span class="name">یونس بابادی</span></div>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span>حل‌یار</div>
+    <a class="cta-mini" href="app.html">شروع رایگان</a>
   </div>
+</nav>
+
+<div class="wrap hero">
+  <div class="hero-grid">
+    <div>
+      <span class="eyebrow">✦ دستیار هوش مصنوعی کنکور</span>
+      <h1>هر سوال، حل‌شده <span class="grad">عین کتاب درسی</span> خودت</h1>
+      <p class="sub">پایه و رشته‌ت رو انتخاب کن، سوالتو بنویس یا عکسشو بفرست. حل‌یار دقیقاً با روش و ترتیب همون فصل کتاب درسی، قدم‌به‌قدم حلش می‌کنه — نه با روش‌های دانشگاهی و خارج از چارچوب کنکور.</p>
+      <div class="hero-ctas">
+        <a class="btn-primary" href="app.html">شروع رایگان ←</a>
+        <a class="btn-ghost" href="#how">چطور کار می‌کنه؟</a>
+      </div>
+      <div class="chip-row">
+        <span class="chip">پایه دهم</span>
+        <span class="chip">یازدهم</span>
+        <span class="chip">دوازدهم</span>
+        <span class="chip">ریاضی‌فیزیک</span>
+        <span class="chip">تجربی</span>
+        <span class="chip">انسانی</span>
+      </div>
+    </div>
+
+    <div class="glow-frame">
+      <div class="glow-inner demo-panel">
+        <div class="demo-topbar">
+          <span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>
+          <span class="tlabel">حل‌یار · پایه یازدهم · ریاضی‌فیزیک</span>
+        </div>
+        <div class="demo-q">مشتق تابع $f(x)=x^3-2x$ رو به‌دست بیار.</div>
+        <div class="demo-step"><span class="tick">✔</span><span class="txt">طبق فصل «مشتق» کتاب حسابان، از قاعده‌ی توان استفاده می‌کنیم:</span></div>
+        <div class="demo-step"><span class="tick">✔</span><span class="txt">$\dfrac{d}{dx}x^n = nx^{n-1}$ روی هر جمله اعمال می‌شه.</span></div>
+        <div class="demo-step"><span class="tick">✔</span><span class="txt">پس <strong>$f'(x) = 3x^2 - 2$</strong> — دقیقاً به روش کتاب درسی.</span></div>
+        <div class="demo-badge"><span class="lp"></span>در حال حل طبق کتاب درسی…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="wrap">
+    <div class="stat"><div class="num">۳</div><div class="lbl">پایه تحصیلی</div></div>
+    <div class="stat"><div class="num">۳</div><div class="lbl">رشته‌ی کنکوری</div></div>
+    <div class="stat"><div class="num">۱۰۰٪</div><div class="lbl">مطابق کتاب درسی</div></div>
+    <div class="stat"><div class="num">هر روز</div><div class="lbl">سهمیه‌ی رایگان</div></div>
+  </div>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">روند کار</span>
+      <h2>سه قدم تا حل شدن سوالت</h2>
+      <p>هیچ ثبت‌نامی، هیچ تنظیمات پیچیده‌ای — همین الان شروع کن.</p>
+    </div>
+    <div class="steps">
+      <div class="step-card">
+        <span class="idx">۰۱</span>
+        <h3>پایه و رشته‌ت رو انتخاب کن</h3>
+        <p>چون روش حل هر پایه و رشته با بقیه فرق داره، اول مسیر درسی خودتو مشخص می‌کنی.</p>
+      </div>
+      <div class="step-card">
+        <span class="idx">۰۲</span>
+        <h3>سوالتو بنویس یا عکس بگیر</h3>
+        <p>تایپ کن یا مستقیم از رو کتاب و دفترت عکس بگیر و بفرست، حل‌یار خودش متن سوال رو می‌خونه.</p>
+      </div>
+      <div class="step-card">
+        <span class="idx">۰۳</span>
+        <h3>حل گام‌به‌گام بگیر</h3>
+        <p>جواب رو دقیقاً با روش و ترتیب همون کتاب درسی، با فرمول‌نویسی درست، مرحله به مرحله می‌بینی.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">چرا حل‌یار؟</span>
+      <h2>ساخته‌شده برای کنکور، نه یه چت‌بات عمومی</h2>
+      <p>هر تصمیم طراحی این ابزار حول یه چیز می‌چرخه: عین کتاب درسی خودت حل کنه.</p>
+    </div>
+    <div class="features">
+      <div class="feat-card">
+        <span class="ic">📘</span>
+        <h3>کتاب‌محور، نه دانشگاهی</h3>
+        <p>از روش‌های خارج از چارچوب کنکور استفاده نمی‌کنه؛ دقیقاً با سرفصل کتاب همون پایه و رشته جواب می‌ده.</p>
+      </div>
+      <div class="feat-card">
+        <span class="ic">∑</span>
+        <h3>فرمول‌نویسی درست</h3>
+        <p>فرمول‌های ریاضی و فیزیک با KaTeX رندر می‌شن — دقیقاً خوانا، نه متن به‌هم‌ریخته.</p>
+      </div>
+      <div class="feat-card">
+        <span class="ic">📷</span>
+        <h3>عکس سوال هم قبوله</h3>
+        <p>لازم نیست تایپ کنی؛ از رو کتاب یا دفترت عکس بگیر، خودش می‌خونه و حل می‌کنه.</p>
+      </div>
+      <div class="feat-card">
+        <span class="ic">⚡</span>
+        <h3>هر روز رایگان</h3>
+        <p>بدون نیاز به کارت یا خرید؛ هر روز چندتا سوال رایگان تو سهمیه‌ته.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">مسیر تو</span>
+      <h2>پایه‌تو با رشته‌ت جفت کن</h2>
+    </div>
+    <div class="path-preview">
+      <div class="path-col">
+        <div class="path-pill">دهم</div>
+        <div class="path-pill">یازدهم</div>
+        <div class="path-pill">دوازدهم</div>
+      </div>
+      <span class="path-x">×</span>
+      <div class="path-col">
+        <div class="path-pill">ریاضی‌فیزیک</div>
+        <div class="path-pill">تجربی</div>
+        <div class="path-pill">انسانی</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="glow-frame cta-band">
+    <div class="glow-inner inner">
+      <h2>امروز شروع کن</h2>
+      <p>اولین سوالتو بفرست و ببین حل‌یار چطور دقیقاً مثل کتاب درسیت حلش می‌کنه.</p>
+      <a class="btn-primary" href="app.html">شروع رایگان ←</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span>حل‌یار</div>
+    <p>ساخته‌شده برای دانش‌آموزهای کنکوری ایران</p>
+  </div>
+</footer>
 
 <script>
-const GRADES = [
-  {id:'دهم', label:'دهم', num:'۱۰'},
-  {id:'یازدهم', label:'یازدهم', num:'۱۱'},
-  {id:'دوازدهم', label:'دوازدهم', num:'۱۲'},
-];
-const MAJORS = [
-  {id:'ریاضی فیزیک', label:'ریاضی فیزیک', desc:'حسابان، هندسه، فیزیک'},
-  {id:'علوم تجربی', label:'علوم تجربی', desc:'زیست، شیمی، فیزیک'},
-  {id:'علوم انسانی', label:'علوم انسانی', desc:'ادبیات، اقتصاد، جامعه‌شناسی'},
-];
-
-let state = { grade:null, major:null, messages:[] };
-let attachedImage = null;
-let screenStack = ['grade'];
-
-function goBack(){ if(screenStack.length<=1) return; screenStack.pop(); render(); }
-function goTo(screen){ screenStack.push(screen); render(); }
-
-function gradeLabel(){ return state.grade || ''; }
-function majorLabel(){ return state.major || ''; }
-
-async function refreshQuota(){
-  try{
-    const r = await fetch('/api/quota');
-    const d = await r.json();
-    const pill = document.getElementById('quotaPill');
-    pill.style.display = 'inline-block';
-    pill.textContent = `${d.remaining} سوال رایگان باقی‌مانده`;
-  }catch(e){ /* بی‌سروصدا رد شو، اگه بک‌اند بالا نیست */ }
-}
-
-function render(){
-  const screen = screenStack[screenStack.length-1];
-  document.getElementById('backBtn').disabled = screenStack.length<=1;
-  const area = document.getElementById('screenArea');
-  const pathLabel = document.getElementById('pathLabel');
-  area.classList.remove('screen'); void area.offsetWidth; area.classList.add('screen');
-
-  if(screen === 'grade'){
-    pathLabel.textContent = 'انتخاب پایه';
-    area.innerHTML = `
-      <div class="screen-title">پایه‌ت رو انتخاب کن</div>
-      <div class="screen-sub">هر پایه، کتاب‌ها و روش حل مخصوص خودش رو داره</div>
-      <div class="tab-grid">
-        ${GRADES.map(g => `
-          <div class="tab-card" onclick="selectGrade('${g.id}')">
-            <span class="num">${g.num}</span>
-            <span class="label">پایه ${g.label}</span>
-          </div>`).join('')}
-      </div>`;
-  } else if(screen === 'major'){
-    pathLabel.textContent = `پایه ${gradeLabel()} › انتخاب رشته`;
-    area.innerHTML = `
-      <div class="screen-title">رشته‌ت چیه؟</div>
-      <div class="screen-sub">پایه ${gradeLabel()} — بر اساس رشته، دروس و روش حل فرق می‌کنه</div>
-      <div class="tab-grid">
-        ${MAJORS.map(m => `
-          <div class="tab-card" onclick="selectMajor('${m.id}')">
-            <span class="label">${m.label}</span>
-            <div class="desc">${m.desc}</div>
-          </div>`).join('')}
-      </div>`;
-  } else if(screen === 'chat'){
-    pathLabel.textContent = `پایه ${gradeLabel()} › ${majorLabel()}`;
-    area.innerHTML = `
-      <div class="screen-title" style="font-size:20px; margin-bottom:2px;">سوالت رو بپرس</div>
-      <div class="screen-sub" style="margin-bottom:14px;">می‌تونی متن بنویسی یا عکس سوال رو بفرستی</div>
-      <div class="chat-wrap" style="height:420px;">
-        <div id="errorSlot"></div>
-        <div class="messages" id="messages"></div>
-        <div id="attachSlot"></div>
-        <div class="composer">
-          <button class="icon-btn" title="آپلود عکس" onclick="document.getElementById('fileInput').click()">📎</button>
-          <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">
-          <textarea id="questionInput" placeholder="مثلاً: مشتق تابع f(x)=x^3-2x را بدست آورید" onkeydown="handleKey(event)"></textarea>
-          <button class="send" id="sendBtn" onclick="sendQuestion()">ارسال</button>
-        </div>
-      </div>`;
-    renderMessages();
-    renderAttachPreview();
-    refreshQuota();
-  }
-}
-
-function selectGrade(id){ state.grade = id; goTo('major'); }
-function selectMajor(id){ state.major = id; state.messages = []; attachedImage = null; goTo('chat'); }
-
-function handleKey(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendQuestion(); } }
-
-function handleFile(e){
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev){
-    const result = ev.target.result;
-    const [meta, b64] = result.split(',');
-    const mime = meta.match(/data:(.*);base64/)[1];
-    attachedImage = { mime, base64:b64, previewUrl:result };
-    renderAttachPreview();
-  };
-  reader.readAsDataURL(file);
-}
-function removeAttachment(){ attachedImage=null; document.getElementById('fileInput').value=''; renderAttachPreview(); }
-function renderAttachPreview(){
-  const slot = document.getElementById('attachSlot');
-  if(!slot) return;
-  if(!attachedImage){ slot.innerHTML=''; return; }
-  slot.innerHTML = `<div class="attach-preview"><img src="${attachedImage.previewUrl}"><span>عکس ضمیمه شد</span><button onclick="removeAttachment()">حذف</button></div>`;
-}
-
-function renderMessages(){
-  const box = document.getElementById('messages');
-  if(!box) return;
-  if(state.messages.length === 0){
-    box.innerHTML = `<div class="empty-hint"><span class="glyph">✏️</span>هنوز سوالی نپرسیدی — شروع کن!</div>`;
-    return;
-  }
-  box.innerHTML = state.messages.map(m => {
-    if(m.role==='user'){
-      return `<div class="msg user">${escapeHtml(m.text||'')}${m.imagePreview?`<img src="${m.imagePreview}">`:''}</div>`;
-    } else if(m.role==='assistant'){
-      return `<div class="msg ai"><span class="tick">✔</span><span class="content">${formatAssistantText(m.text)}</span></div>`;
-    } else if(m.role==='loading'){
-      return `<div class="typing"><span></span><span></span><span></span></div>`;
-    }
-  }).join('');
-  box.scrollTop = box.scrollHeight;
-
   if(window.renderMathInElement){
-    box.querySelectorAll('.msg.ai .content').forEach(el=>{
-      try{
-        renderMathInElement(el, {
-          delimiters:[
-            {left:"$$", right:"$$", display:true},
-            {left:"$", right:"$", display:false},
-            {left:"\\(", right:"\\)", display:false},
-            {left:"\\[", right:"\\]", display:true}
-          ],
+    renderMathInElement(document.body, {
+      delimiters:[
+        {left:"$$", right:"$$", display:true},
+        {left:"$", right:"$", display:false}
+      ],
+      throwOnError:false
+    });
+  } else {
+    document.addEventListener('DOMContentLoaded', function(){
+      if(window.renderMathInElement){
+        renderMathInElement(document.body, {
+          delimiters:[{left:"$$", right:"$$", display:true},{left:"$", right:"$", display:false}],
           throwOnError:false
         });
-      }catch(e){ console.error(e); }
+      }
     });
   }
-}
-
-function escapeHtml(str){ const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
-function formatAssistantText(raw){
-  let text = escapeHtml(raw||'');
-  text = text.replace(/^---$/gm, '<hr>');
-  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  text = text.replace(/^\*\s+/gm, '• ');
-  return text;
-}
-
-async function sendQuestion(){
-  const input = document.getElementById('questionInput');
-  const text = input.value.trim();
-  if(!text && !attachedImage) return;
-
-  document.getElementById('errorSlot').innerHTML = '';
-  const userMsg = { role:'user', text, imagePreview: attachedImage ? attachedImage.previewUrl : null };
-  const imageForRequest = attachedImage;
-  state.messages.push(userMsg);
-  state.messages.push({role:'loading'});
-  input.value=''; attachedImage=null;
-  document.getElementById('sendBtn').disabled = true;
-  renderMessages(); renderAttachPreview();
-
-  try{
-    const payload = {
-      grade: state.grade,
-      major: state.major,
-      messages: state.messages
-        .filter(m=>m.role==='user'||m.role==='assistant')
-        .map(m=>({role:m.role, text:m.text})),
-      image: imageForRequest ? { mime: imageForRequest.mime, base64: imageForRequest.base64 } : null
-    };
-
-    const r = await fetch('/api/chat', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
-    });
-    const data = await r.json();
-    state.messages.pop();
-
-    if(!r.ok){ throw new Error(data.error || 'خطای نامشخص'); }
-
-    state.messages.push({role:'assistant', text: data.text});
-    if(typeof data.remainingToday === 'number'){
-      const pill = document.getElementById('quotaPill');
-      pill.style.display='inline-block';
-      pill.textContent = `${data.remainingToday} سوال رایگان باقی‌مانده`;
-    }
-  }catch(err){
-    state.messages.pop();
-    document.getElementById('errorSlot').innerHTML = `<div class="error-box">خطا: ${escapeHtml(err.message)}</div>`;
-  }
-  document.getElementById('sendBtn').disabled = false;
-  renderMessages();
-}
-
-render();
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
 </body>
 </html>
