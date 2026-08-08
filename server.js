@@ -4,9 +4,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { pool, initDb } = require('./db');
+const { pool, initDb, dbEnabled } = require('./db');
 const { sendOtpSms } = require('./sms');
 const { requestPayment, verifyPayment } = require('./zarinpal');
+
+// سهمیه‌ی روزانه در حافظه — فقط برای وقتی که دیتابیس وصل نیست (حالت ساده)
+const memoryUsage = new Map(); // key: identifier, value: { date, count }
 
 const app = express();
 app.set('trust proxy', true); // برای گرفتن IP واقعی کاربر پشت پراکسی Railway
@@ -21,9 +24,9 @@ const APP_BASE_URL = process.env.APP_BASE_URL || 'http://localhost:3000';
 const SUBSCRIPTION_PRICE_TOMAN = parseInt(process.env.SUBSCRIPTION_PRICE_TOMAN || '99000', 10);
 const PORT = process.env.PORT || 3000;
 
-if (!GEMINI_API_KEY) console.warn('⚠️  GEMINI_API_KEY تنظیم نشده.');
-if (!process.env.DATABASE_URL) console.warn('⚠️  DATABASE_URL تنظیم نشده — بدون دیتابیس سرور بالا نمیاد.');
-if (!process.env.ZARINPAL_MERCHANT_ID) console.warn('⚠️  ZARINPAL_MERCHANT_ID تنظیم نشده — پرداخت کار نمی‌کنه.');
+if (!GEMINI_API_KEY) console.warn('⚠️  GEMINI_API_KEY تنظیم نشده — چت کار نمی‌کنه.');
+if (!process.env.DATABASE_URL) console.warn('ℹ️  DATABASE_URL تنظیم نشده — حالت ساده بدون لاگین/اشتراک فعاله.');
+if (!process.env.ZARINPAL_MERCHANT_ID) console.warn('ℹ️  ZARINPAL_MERCHANT_ID تنظیم نشده — خرید اشتراک هنوز فعال نیست.');
 
 // ---------------------------------------------------------------
 // ابزارهای کمکی
@@ -69,7 +72,7 @@ function todayStr() { return new Date().toISOString().slice(0, 10); }
 function quotaIdentifier(req) { return req.userId ? `user:${req.userId}` : `ip:${req.ip}`; }
 
 async function getSubscription(userId) {
-  if (!userId) return { active: false };
+  if (!dbEnabled || !userId) return { active: false };
   const r = await pool.query('SELECT status, expires_at FROM subscriptions WHERE user_id=$1', [userId]);
   if (!r.rows.length) return { active: false };
   const row = r.rows[0];
@@ -77,10 +80,21 @@ async function getSubscription(userId) {
   return { active, expiresAt: row.expires_at };
 }
 async function getTodayUsage(identifier) {
+  if (!dbEnabled) {
+    const entry = memoryUsage.get(identifier);
+    return entry && entry.date === todayStr() ? entry.count : 0;
+  }
   const r = await pool.query('SELECT count FROM usage_daily WHERE identifier=$1 AND day=$2', [identifier, todayStr()]);
   return r.rows.length ? r.rows[0].count : 0;
 }
 async function incrementUsage(identifier) {
+  if (!dbEnabled) {
+    const today = todayStr();
+    const entry = memoryUsage.get(identifier);
+    if (!entry || entry.date !== today) memoryUsage.set(identifier, { date: today, count: 1 });
+    else entry.count += 1;
+    return;
+  }
   await pool.query(
     `INSERT INTO usage_daily (identifier, day, count) VALUES ($1, $2, 1)
      ON CONFLICT (identifier, day) DO UPDATE SET count = usage_daily.count + 1`,
@@ -92,6 +106,7 @@ async function incrementUsage(identifier) {
 // احراز هویت: ارسال و تایید کد OTP
 // ---------------------------------------------------------------
 app.post('/api/auth/request-otp', async (req, res) => {
+  if (!dbEnabled) return res.status(503).json({ error: 'خرید اشتراک هنوز فعال نشده — بعداً امتحان کن.' });
   try {
     const phone = normalizePhone(req.body.phone);
     if (!phone) return res.status(400).json({ error: 'شماره موبایل معتبر نیست.' });
@@ -117,6 +132,7 @@ app.post('/api/auth/request-otp', async (req, res) => {
 });
 
 app.post('/api/auth/verify-otp', async (req, res) => {
+  if (!dbEnabled) return res.status(503).json({ error: 'خرید اشتراک هنوز فعال نشده — بعداً امتحان کن.' });
   try {
     const phone = normalizePhone(req.body.phone);
     const code = String(req.body.code || '').trim();
@@ -177,6 +193,7 @@ app.get('/api/me', optionalAuth, async (req, res) => {
 // پرداخت / اشتراک با زرین‌پال
 // ---------------------------------------------------------------
 app.post('/api/payment/create', requireAuth, async (req, res) => {
+  if (!dbEnabled) return res.status(503).json({ error: 'خرید اشتراک هنوز فعال نشده — بعداً امتحان کن.' });
   try {
     const callbackUrl = `${APP_BASE_URL}/api/payment/callback`;
     const { authority, payUrl } = await requestPayment({
