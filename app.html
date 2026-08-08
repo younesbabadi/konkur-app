@@ -189,6 +189,15 @@
   .chat-item .del{ background:none; border:none; color:var(--text-low); cursor:pointer; padding:4px; flex-shrink:0; font-size:14px; }
   .chat-item .del:hover{ color:var(--danger); }
 
+  /* ---- purchase modal ---- */
+  .purchase-modal{
+    position:absolute; left:50%; top:50%; transform:translate(-50%, -46%) scale(0.96); width:88%; max-width:340px;
+    background:var(--deep); border:1px solid var(--border); border-radius:16px; padding:20px;
+    z-index:41; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; box-shadow:var(--shadow);
+  }
+  .purchase-modal.open{ opacity:1; pointer-events:auto; transform:translate(-50%, -50%) scale(1); }
+  #purchaseBackdrop{ z-index:40; }
+
   /* ---- home ---- */
   .home-wrap{ display:flex; flex-direction:column; gap:14px; }
   .hello{ font-size:20px; font-weight:800; margin-bottom:6px; }
@@ -263,6 +272,80 @@ const SUGGESTIONS = [
 ];
 
 const EM = { home:'🏠', chat:'💬', account:'👤', menu:'☰', plus:'➕', trash:'🗑️', close:'✕' };
+
+/* ---------------- احراز هویت (فقط موقع خرید اشتراک لازمه) ---------------- */
+const TOKEN_KEY = 'solyar_token_v1';
+function getToken(){ return localStorage.getItem(TOKEN_KEY); }
+function setToken(t){ localStorage.setItem(TOKEN_KEY, t); }
+function clearToken(){ localStorage.removeItem(TOKEN_KEY); }
+async function authFetch(url, opts={}){
+  const token = getToken();
+  const headers = Object.assign({}, opts.headers || {}, token ? { 'Authorization': 'Bearer ' + token } : {});
+  return fetch(url, Object.assign({}, opts, { headers }));
+}
+function logout(){
+  if(!confirm('از حسابت خارج بشی؟')) return;
+  clearToken();
+  renderMain();
+}
+
+/* ---------------- مودال خرید اشتراک ---------------- */
+let purchasePhone = '';
+function openPurchaseModal(){
+  document.getElementById('purchaseBackdrop').classList.add('open');
+  document.getElementById('purchaseModal').classList.add('open');
+  renderPurchaseStep('phone');
+}
+function closePurchaseModal(){
+  const b=document.getElementById('purchaseBackdrop'), m=document.getElementById('purchaseModal');
+  if(b) b.classList.remove('open');
+  if(m) m.classList.remove('open');
+}
+function renderPurchaseStep(step, errorMsg){
+  const area = document.getElementById('purchaseBody');
+  if(!area) return;
+  if(step==='phone'){
+    area.innerHTML = `
+      <div class="screen-sub" style="text-align:center; margin-bottom:16px;">برای خرید اشتراک، شماره موبایلتو وارد کن تا کد تاییدش رو بفرستیم</div>
+      ${errorMsg ? `<div class="error-box">${escapeHtml(errorMsg)}</div>` : ''}
+      <input id="purchasePhoneInput" type="tel" inputmode="numeric" placeholder="۰۹xxxxxxxxx"
+        style="width:100%; text-align:center; direction:ltr; font-family:var(--font-mono); font-size:16px; padding:14px; border-radius:10px; border:1.5px solid var(--border-soft); background:var(--elevated); color:var(--text-hi); margin-bottom:14px;">
+      <button class="continue-btn" style="width:100%; justify-content:center;" onclick="submitPurchasePhone()">دریافت کد تایید</button>`;
+    const el = document.getElementById('purchasePhoneInput'); if(el) el.focus();
+  } else if(step==='otp'){
+    area.innerHTML = `
+      <div style="text-align:center; font-family:var(--font-mono); font-size:13px; color:var(--text-mid); margin-bottom:14px;">کد ارسال‌شده به ${purchasePhone}</div>
+      ${errorMsg ? `<div class="error-box">${escapeHtml(errorMsg)}</div>` : ''}
+      <input id="purchaseOtpInput" type="tel" inputmode="numeric" maxlength="6" placeholder="کد ۶ رقمی"
+        style="width:100%; text-align:center; direction:ltr; letter-spacing:6px; font-family:var(--font-mono); font-size:20px; padding:14px; border-radius:10px; border:1.5px solid var(--border-soft); background:var(--elevated); color:var(--text-hi); margin-bottom:14px;">
+      <button class="continue-btn" style="width:100%; justify-content:center;" onclick="submitPurchaseOtp()">تایید و رفتن به درگاه پرداخت</button>
+      <button class="link-btn" style="display:block; text-align:center; width:100%; margin-top:14px;" onclick="renderPurchaseStep('phone')">تغییر شماره</button>`;
+    const el = document.getElementById('purchaseOtpInput'); if(el) el.focus();
+  } else if(step==='loading'){
+    area.innerHTML = `<div class="empty-hint"><span class="glyph">⏳</span>در حال اتصال به درگاه پرداخت…</div>`;
+  }
+}
+async function submitPurchasePhone(){
+  const val = document.getElementById('purchasePhoneInput').value.trim();
+  try{
+    const r = await fetch('/api/auth/request-otp', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({phone:val}) });
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error || 'خطا در ارسال کد');
+    purchasePhone = val;
+    renderPurchaseStep('otp');
+  }catch(err){ renderPurchaseStep('phone', err.message); }
+}
+async function submitPurchaseOtp(){
+  const code = document.getElementById('purchaseOtpInput').value.trim();
+  try{
+    const r = await fetch('/api/auth/verify-otp', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({phone:purchasePhone, code}) });
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error || 'کد اشتباهه');
+    setToken(d.token);
+    renderPurchaseStep('loading');
+    await startCheckout();
+  }catch(err){ renderPurchaseStep('otp', err.message); }
+}
 
 const LS_KEY = 'solyar_app_state_v1';
 function loadState(){
@@ -354,6 +437,11 @@ function mainShellHTML(){
       <div class="drawer-head"><span>گفتگوها</span><button onclick="closeDrawer()">${EM.close}</button></div>
       <button class="new-chat-btn" onclick="startNewChatFromDrawer()">${EM.plus} چت جدید</button>
       <div class="drawer-list" id="drawerList"></div>
+    </div>
+    <div class="drawer-backdrop" id="purchaseBackdrop" onclick="closePurchaseModal()"></div>
+    <div class="purchase-modal" id="purchaseModal">
+      <div class="drawer-head"><span>⚡ خرید اشتراک</span><button onclick="closePurchaseModal()">${EM.close}</button></div>
+      <div id="purchaseBody"></div>
     </div>`;
 }
 function renderMain(){
@@ -594,18 +682,32 @@ async function sendQuestion(){
         .map(m=>({role:m.role, text:m.text})),
       image: imageForRequest ? { mime: imageForRequest.mime, base64: imageForRequest.base64 } : null
     };
-    const r = await fetch('/api/chat', {
+    const r = await authFetch('/api/chat', {
       method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
     });
     const data = await r.json();
     chat.messages.pop();
-    if(!r.ok){ throw new Error(data.error || 'خطای نامشخص'); }
+    if(!r.ok){
+      if(data.quotaExceeded){
+        saveState();
+        document.getElementById('errorSlot').innerHTML = `
+          <div class="error-box" style="display:flex; flex-direction:column; gap:10px;">
+            <span>سهمیه‌ی رایگان امروزت تموم شده.</span>
+            <button class="continue-btn" style="justify-content:center;" onclick="openPurchaseModal()">⚡ خرید اشتراک نامحدود</button>
+          </div>`;
+        renderMessages();
+        document.getElementById('sendBtn').disabled = false;
+        return;
+      }
+      throw new Error(data.error || 'خطای نامشخص');
+    }
     chat.messages.push({role:'assistant', text: data.text});
     chat.updatedAt = Date.now();
     saveState();
-    if(typeof data.remainingToday === 'number'){
-      const pill = document.getElementById('quotaPill');
-      if(pill){ pill.style.display='inline-block'; pill.textContent = `${data.remainingToday} سوال رایگان باقی‌مانده`; }
+    const pill = document.getElementById('quotaPill');
+    if(pill){
+      if(data.unlimited){ pill.style.display='inline-block'; pill.textContent = 'اشتراک نامحدود ⚡'; }
+      else if(typeof data.remainingToday === 'number'){ pill.style.display='inline-block'; pill.textContent = `${data.remainingToday} سوال رایگان باقی‌مانده`; }
     }
   }catch(err){
     chat.messages.pop();
@@ -619,8 +721,54 @@ async function sendQuestion(){
 /* ---------------- account ---------------- */
 function renderAccountScreen(){
   const area = document.getElementById('screenArea');
-  area.innerHTML = `
-    <div class="account-wrap">
+  area.innerHTML = `<div class="account-wrap" id="accountWrap"><div class="empty-hint">در حال بارگذاری…</div></div>`;
+  loadAccountData();
+}
+async function loadAccountData(){
+  const wrap = document.getElementById('accountWrap');
+  try{
+    const r = await authFetch('/api/me');
+    const d = await r.json();
+
+    if(d.guest){
+      const qr = await fetch('/api/quota');
+      const q = await qr.json();
+      const pct = Math.round(100 * (q.used / Math.max(1, q.limit)));
+      const dash = 402 - (402 * pct / 100);
+      wrap.innerHTML = `
+        <div class="ring-wrap">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#7C5CFF"/><stop offset="100%" stop-color="#25E0CC"/>
+            </linearGradient></defs>
+            <circle cx="75" cy="75" r="64" fill="none" stroke="#1E2140" stroke-width="11"/>
+            <circle cx="75" cy="75" r="64" fill="none" stroke="url(#ringGrad)" stroke-width="11" stroke-linecap="round"
+              stroke-dasharray="402" stroke-dashoffset="${dash}" style="transform:rotate(-90deg); transform-origin:75px 75px; transition:stroke-dashoffset .5s;"/>
+          </svg>
+          <div class="ring-label"><div class="pct">${pct}٪</div><div class="sm">رایگان</div></div>
+        </div>
+        <span class="plan-badge">🆓 پلن رایگان</span>
+        <div class="stat-row" style="width:100%;">
+          <div class="stat-box"><div class="n">${q.remaining}</div><div class="l">سهمیه‌ی امروز</div></div>
+          <div class="stat-box"><div class="n">${appState.chats.length}</div><div class="l">گفتگو</div></div>
+        </div>
+        <div class="home-card">
+          <h3>⚡ چرا پرمیوم بگیرم؟</h3>
+          <p>سوال نامحدود روزانه، بدون منتظر موندن برای فردا. با خرید اشتراک، فقط شماره‌ت رو تایید می‌کنی و مستقیم می‌ری درگاه پرداخت.</p>
+        </div>
+        <button class="continue-btn" style="width:100%; justify-content:center;" onclick="openPurchaseModal()">⚡ خرید اشتراک</button>
+        <p style="font-size:10.5px; color:var(--text-low); text-align:center; opacity:0.65;">حل‌یار · سازنده: یونس بابادی</p>`;
+      return;
+    }
+
+    const active = d.subscription && d.subscription.active;
+    const pct = active ? 100 : Math.round(100 * (d.quota.used / Math.max(1, d.quota.limit)));
+    const dash = 402 - (402 * pct / 100);
+    const expiresLabel = active && d.subscription.expiresAt
+      ? new Date(d.subscription.expiresAt).toLocaleDateString('fa-IR')
+      : null;
+
+    wrap.innerHTML = `
       <div class="ring-wrap">
         <svg width="150" height="150" viewBox="0 0 150 150">
           <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
@@ -628,39 +776,66 @@ function renderAccountScreen(){
           </linearGradient></defs>
           <circle cx="75" cy="75" r="64" fill="none" stroke="#1E2140" stroke-width="11"/>
           <circle cx="75" cy="75" r="64" fill="none" stroke="url(#ringGrad)" stroke-width="11" stroke-linecap="round"
-            stroke-dasharray="402" stroke-dashoffset="0" style="transform:rotate(-90deg); transform-origin:75px 75px;"/>
+            stroke-dasharray="402" stroke-dashoffset="${dash}" style="transform:rotate(-90deg); transform-origin:75px 75px; transition:stroke-dashoffset .5s;"/>
         </svg>
-        <div class="ring-label"><div class="pct">۱۰۰٪</div><div class="sm">فعال</div></div>
+        <div class="ring-label"><div class="pct">${active ? '۱۰۰٪' : pct+'٪'}</div><div class="sm">${active ? 'فعال' : 'رایگان'}</div></div>
       </div>
-      <span class="plan-badge">⚡ پلن پرمیوم</span>
+      <span class="plan-badge">${active ? '⚡ پلن پرمیوم' : '🆓 پلن رایگان'}</span>
+      <div style="font-family:var(--font-mono); font-size:12px; color:var(--text-mid);" dir="ltr">${d.phone}</div>
       <div class="stat-row" style="width:100%;">
-        <div class="stat-box"><div class="n" id="quotaAccNum">—</div><div class="l">سهمیه‌ی امروز</div></div>
+        <div class="stat-box"><div class="n">${active ? '∞' : (d.quota.remaining ?? '—')}</div><div class="l">سهمیه‌ی امروز</div></div>
         <div class="stat-box"><div class="n">${appState.chats.length}</div><div class="l">گفتگو</div></div>
       </div>
       <div class="feature-list">
-        <div class="fi"><span class="ck">✔</span>سوال نامحدود روزانه</div>
-        <div class="fi"><span class="ck">✔</span>آپلود عکس بدون محدودیت</div>
-        <div class="fi"><span class="ck">✔</span>اولویت پاسخ‌دهی هوش‌مصنوعی</div>
+        <div class="fi"><span class="ck">${active?'✔':'—'}</span>سوال نامحدود روزانه</div>
+        <div class="fi"><span class="ck">${active?'✔':'—'}</span>اولویت پاسخ‌دهی هوش‌مصنوعی</div>
+        <div class="fi"><span class="ck">✔</span>آپلود عکس سوال</div>
       </div>
-      <button class="manage-btn" disabled>مدیریت اشتراک <span class="tag">به‌زودی</span></button>
-      <p style="font-size:11px; color:var(--text-low); text-align:center; line-height:1.7;">نسخه‌ی نمایشیه — پرداخت و مدیریت اشتراک واقعی هنوز وصل نشده</p>
+      ${active
+        ? `<div style="font-size:11.5px; color:var(--text-low); text-align:center;">اشتراکت تا ${expiresLabel} فعاله</div>`
+        : `<button class="continue-btn" style="width:100%; justify-content:center;" onclick="openPurchaseModal()">⚡ خرید اشتراک — ${d.price.toLocaleString('fa-IR')} تومان</button>`
+      }
+      <button class="link-btn" onclick="logout()">خروج از حساب</button>
       <p style="font-size:10.5px; color:var(--text-low); text-align:center; opacity:0.65;">حل‌یار · سازنده: یونس بابادی</p>
     </div>`;
-  refreshQuota();
+  }catch(err){
+    wrap.innerHTML = `<div class="error-box">مشکلی تو بارگذاری اطلاعات حساب پیش اومد.</div>`;
+  }
 }
 
 /* ---------------- quota ---------------- */
 async function refreshQuota(){
   try{
-    const r = await fetch('/api/quota');
+    const r = await authFetch('/api/quota');
     const d = await r.json();
     const pill = document.getElementById('quotaPill');
-    if(pill){ pill.style.display = 'inline-block'; pill.textContent = `${d.remaining} سوال رایگان باقی‌مانده`; }
+    if(pill){
+      pill.style.display = 'inline-block';
+      pill.textContent = d.unlimited ? 'اشتراک نامحدود ⚡' : `${d.remaining} سوال رایگان باقی‌مانده`;
+    }
     const homeNum = document.getElementById('quotaHomeNum');
-    if(homeNum){ homeNum.textContent = d.remaining; }
-    const accNum = document.getElementById('quotaAccNum');
-    if(accNum){ accNum.textContent = `${d.used}/${d.limit}`; }
-  }catch(e){ /* بی‌سروصدا رد شو، اگه بک‌اند بالا نیست */ }
+    if(homeNum){ homeNum.textContent = d.unlimited ? '∞' : d.remaining; }
+  }catch(e){ /* بی‌سروصدا رد شو */ }
+}
+
+/* ---------------- پرداخت / اشتراک ---------------- */
+async function startCheckout(){
+  try{
+    const r = await authFetch('/api/payment/create', { method:'POST' });
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error || 'خطا در اتصال به درگاه');
+    window.location.href = d.payUrl;
+  }catch(err){ alert('خطا: ' + err.message); }
+}
+function checkPaymentRedirect(){
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('payment');
+  if(!status) return;
+  window.history.replaceState({}, '', window.location.pathname);
+  setTimeout(()=>{
+    if(status==='success') alert('پرداخت موفق بود 🎉 اشتراکت فعال شد.');
+    else if(status==='failed') alert('پرداخت انجام نشد یا لغو شد.');
+  }, 300);
 }
 
 /* ---------------- init ---------------- */
@@ -671,6 +846,7 @@ function init(){
     if(!getActiveChat()){ if(appState.chats.length) appState.activeChatId=appState.chats[0].id; else newChat(appState.grade, appState.major); }
     renderMain();
   }
+  checkPaymentRedirect();
 }
 init();
 </script>

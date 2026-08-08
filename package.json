@@ -1,7 +1,7 @@
 {
-  "name": "konkur-assistant",
-  "version": "1.0.0",
-  "description": "دستیار درسی کنکور - بک‌اند امن که کلید API را مدیریت می‌کند",
+  "name": "solyar-konkur",
+  "version": "2.0.0",
+  "description": "حل‌یار — دستیار درسی کنکور با لاگین، اشتراک و دیتابیس",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -10,7 +10,9 @@
   "dependencies": {
     "express": "^4.19.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "pg": "^8.12.0",
+    "jsonwebtoken": "^9.0.2"
   },
   "engines": {
     "node": ">=18"
