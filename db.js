@@ -1,12 +1,21 @@
-// اتصال به دیتابیس Postgres و ساخت جدول‌ها در صورت نبودن
+// اتصال به دیتابیس Postgres — اختیاری. اگه DATABASE_URL تنظیم نشده باشه،
+// سرور بدون دیتابیس (بدون لاگین/اشتراک، فقط با سهمیه‌ی رایگان در حافظه) کار می‌کنه.
 const { Pool } = require('pg');
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL && process.env.DATABASE_URL.includes('railway') ? { rejectUnauthorized: false } : false,
-});
+const dbEnabled = !!process.env.DATABASE_URL;
+
+const pool = dbEnabled
+  ? new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.DATABASE_URL.includes('railway') ? { rejectUnauthorized: false } : false,
+    })
+  : null;
 
 async function initDb() {
+  if (!dbEnabled) {
+    console.log('ℹ️  DATABASE_URL تنظیم نشده — حالت ساده (بدون لاگین/اشتراک، فقط سهمیه‌ی رایگان روزانه) فعاله.');
+    return;
+  }
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
@@ -55,4 +64,4 @@ async function initDb() {
   console.log('✅ جدول‌های دیتابیس آماده‌ان');
 }
 
-module.exports = { pool, initDb };
+module.exports = { pool, initDb, dbEnabled };
